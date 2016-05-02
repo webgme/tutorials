@@ -10,12 +10,19 @@
 define([
     'plugin/PluginConfig',
     'text!./metadata.json',
-    'plugin/PluginBase'
+    'plugin/PluginBase',
+    'text!./Templates/index.html',
+    'common/util/ejs',
+    'text!./Templates/programjs.ejs'
 ], function (
     PluginConfig,
     pluginMetadata,
-    PluginBase) {
+    PluginBase,
+    indexHtmlContent,
+    ejs,
+    programJsTemplate) {
     'use strict';
+
 
     pluginMetadata = JSON.parse(pluginMetadata);
 
@@ -57,25 +64,63 @@ define([
         // Use self to access core, project, result, logger etc from PluginBase.
         // These are all instantiated at this point.
         var self = this,
+            artifact,
             nodeObject;
 
 
-        // Using the logger.
-        self.logger.debug('This is a debug message.');
-        self.logger.info('This is an info message.');
-        self.logger.warn('This is a warning message.');
-        self.logger.error('This is an error message.');
-
-        // Using the coreAPI to make changes.
-
-        nodeObject = self.activeNode;
-
-        self.core.setAttribute(nodeObject, 'name', 'My new obj');
-        self.core.setRegistry(nodeObject, 'position', {x: 70, y: 70});
+        //// Using the logger.
+        //self.logger.debug('This is a debug message.');
+        //self.logger.info('This is an info message.');
+        //self.logger.warn('This is a warning message.');
+        //self.logger.error('This is an error message.');
+        //
+        //// Using the coreAPI to make changes.
+        //
+        //nodeObject = self.activeNode;
+        //
+        //self.core.setAttribute(nodeObject, 'name', 'My new obj');
+        //self.core.setRegistry(nodeObject, 'position', {x: 70, y: 70});
 
         self.extractDataModel()
             .then(function (dataModel) {
-                self.logger.info('Extracted dataModel', JSON.stringify(dataModel, null, 4));
+                var dataModelStr = JSON.stringify(dataModel, null, 4);
+                self.dataModel = dataModel;
+
+                self.logger.info('Extracted dataModel', dataModelStr);
+
+                return self.blobClient.putFile('dataModel.json', dataModelStr);
+            })
+            .then(function (jsonFileHash) {
+                var programJS;
+                self.logger.info('dataModel.json available with blobHash', jsonFileHash);
+                // Add link from result to this file.
+                self.result.addArtifact(jsonFileHash);
+
+                // Create a complex artifact, with links to multiple files.
+                artifact = self.blobClient.createArtifact('simulator');
+
+                programJS = ejs.render(programJsTemplate, self.dataModel);
+
+                self.logger.info('program.js', programJS);
+
+                return artifact.addFiles({
+                    'program.js': programJS,
+                    'index.html': indexHtmlContent
+                });
+            })
+            .then(function (/*hashes*/) {
+                return artifact.save();
+            })
+            .then(function (simulatorHash) {
+                self.result.addArtifact(simulatorHash);
+
+                self.core.setAttribute(self.activeNode, 'simulator', simulatorHash);
+                self.core.setAttribute(self.activeNode, 'simulatorOrigin', self.commitHash);
+
+                return self.save('Added simulator to model');
+            })
+            .then(function () {
+
                 self.result.setSuccess(true);
                 callback(null, self.result);
             })
