@@ -73,17 +73,16 @@ define([
         self.core.setAttribute(nodeObject, 'name', 'My new obj');
         self.core.setRegistry(nodeObject, 'position', {x: 70, y: 70});
 
-
-        // This will save the changes. If you don't want to save;
-        // exclude self.save and call callback directly from this scope.
-        self.save('FSMCodeGenerator updated model.', function (err) {
-            if (err) {
+        self.extractDataModel()
+            .then(function (dataModel) {
+                self.logger.info('Extracted dataModel', JSON.stringify(dataModel, null, 4));
+                self.result.setSuccess(true);
+                callback(null, self.result);
+            })
+            .catch(function (err) {
+                // Success is false at invocation.
                 callback(err, self.result);
-                return;
-            }
-            self.result.setSuccess(true);
-            callback(null, self.result);
-        });
+            });
     };
 
     /**
@@ -91,9 +90,19 @@ define([
      * @param {function(Error, object)} [callback] - If not defined promise a will be returned.
      */
     FSMCodeGenerator.prototype.extractDataModel = function (callback) {
-        var self = this;
+        var self = this,
+            dataModel = {
+                stateMachine: {
+                    name: '',
+                    initialState: null, // Path/id of initial state
+                    finalStates: [],    // Paths/ids of final end states
+                    states: []
+                }
+            };
 
-        // In order to avoid multiple iterative asynchronous 'load' calls we preload all the nodes in the statemachine
+        dataModel.stateMachine.name = self.core.getAttribute(self.activeNode, 'name');
+
+        // In order to avoid multiple iterative asynchronous 'load' calls we pre-load all the nodes in the state-machine
         // and builds up a local hash-map from their paths to the node.
         return this.core.loadSubTree(self.activeNode)
             .then(function (nodes) {
@@ -103,7 +112,7 @@ define([
                     childrenPaths;
 
                 for (i = 0; i < nodes.length; i += 1) {
-                    // For each node in the subtree we get the path and use it for the index of the hashmap, where
+                    // For each node in the subtree we get the path and use it for the index of the hash-map, where
                     // values are the actual node.
                     self.pathToNode[self.core.getPath(nodes[i])] = nodes[i];
                 }
@@ -114,20 +123,49 @@ define([
                     childNode = self.pathToNode[childrenPaths[i]];
                     // Log the name of the child (it's an attribute so we use getAttribute).
                     childName = self.core.getAttribute(childNode, 'name');
-                    self.logger.info('At childNode', childNode);
+                    self.logger.info('At childNode', childName);
+                    // Milestone 1 end
                     // By knowledge of the language we know we are interested in StateBases and Transitions.
                     // self.META contains all the meta-nodes indexed by their name and the PluginBase defines
                     // a method, self.isMetaTypeOf, to check if a node is of a certain meta type.
                     if (self.isMetaTypeOf(childNode, self.META['StateBase']) === true) {
+                        if (self.isMetaTypeOf(childNode, self.META['Initial']) === true) {
+                            dataModel.stateMachine.initialState = self.core.getPath(childNode);
+                        } else if (self.isMetaTypeOf(childNode, self.META['End']) === true) {
+                            dataModel.stateMachine.finalStates.push(self.core.getPath(childNode));
+                        }
 
+                        dataModel.stateMachine.states.push(self.getStateData(childNode));
                     } else if (self.isMetaTypeOf(childNode, self.META['Transition']) === true) {
-
+                        // No need to handle - getStateData will get the transitions.
                     } else {
                         self.logger.debug('Child was not of type StateBase or Transition, skipping', childName);
                     }
                 }
+
+                return dataModel;
             })
             .nodeify(callback);
+    };
+
+    FSMCodeGenerator.prototype.getStateData = function (stateNode) {
+        var stateData = {
+            id: '',
+            name: '',
+            transitions: []
+        };
+
+        return stateData;
+    };
+
+    FSMCodeGenerator.prototype.getTransitionData = function (transitionNode) {
+        var transitionData = {
+            targetId: '',
+            targetName: '',
+            event: ''
+        };
+
+        return transitionData;
     };
 
     return FSMCodeGenerator;

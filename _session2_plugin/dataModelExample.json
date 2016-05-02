@@ -1,0 +1,38 @@
+{
+  "stateMachine": {
+    "name": "StateMachine",
+    "initialState": "/4/D/V",
+    "finalStates": [
+      "/4/D/d"
+    ],
+    "states": [
+      {
+        "id": "/4/D/V",
+        "name": "Initial",
+        "transitions": [
+          {
+            "event": "start",
+            "targetId": "/4/D/4",
+            "targetName": "State"
+          }
+        ]
+      },
+      {
+        "id": "/4/D/4",
+        "name": "State",
+        "transitions": [
+          {
+            "event": "end",
+            "targetId": "/4/D/d",
+            "targetName": "End"
+          }
+        ]
+      },
+      {
+        "id": "/4/D/d",
+        "name": "End",
+        "transitions": []
+      }
+    ]
+  }
+}
