@@ -149,21 +149,52 @@ define([
     };
 
     FSMCodeGenerator.prototype.getStateData = function (stateNode) {
-        var stateData = {
-            id: '',
-            name: '',
-            transitions: []
-        };
+        var self = this,
+            stateData = {
+                id: '',
+                name: '',
+                transitions: []
+            },
+            i,
+            transNode,
+            transPaths;
+
+        stateData.name = self.core.getAttribute(stateNode, 'name');
+        stateData.id = self.core.getPath(stateNode);
+
+        // StateNode <--src:TransitionNode:dst--> AnotherState
+        // Q: Which are the outgoing transitions from a state node?
+        // Q: [Rephrased] Which are the transitions that have the state node as a target for its 'src' pointer?
+
+        transPaths = self.core.getCollectionPaths(stateNode, 'src');
+
+        for (i = 0; i < transPaths.length; i += 1) {
+            transNode = self.pathToNode[transPaths[i]];
+            self.logger.info(stateData.name, 'has outgoing transition', transPaths[i]);
+            stateData.transitions.push(self.getTransitionData(transNode));
+        }
 
         return stateData;
     };
 
     FSMCodeGenerator.prototype.getTransitionData = function (transitionNode) {
-        var transitionData = {
-            targetId: '',
-            targetName: '',
-            event: ''
-        };
+        var self = this,
+            transitionData = {
+                targetId: '',
+                targetName: '',
+                event: ''
+            },
+            targetNode;
+
+        transitionData.event = self.core.getAttribute(transitionNode, 'event');
+
+        // StateNode <--src:TransitionNode:dst--> AnotherState
+        // Q: What is the target for the 'dst' pointer of TransitionNode?
+        transitionData.targetId = self.core.getPointerPath(transitionNode, 'dst');
+
+        targetNode = self.pathToNode[transitionData.targetId];
+
+        transitionData.targetName = self.core.getAttribute(targetNode, 'name');
 
         return transitionData;
     };
