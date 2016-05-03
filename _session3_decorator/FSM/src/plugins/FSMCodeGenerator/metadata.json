@@ -1,0 +1,14 @@
+{
+  "id": "FSMCodeGenerator",
+  "name": "FSMCodeGenerator",
+  "version": "0.1.0",
+  "description": "Generates a finite-state-machine simulator in javascript.",
+  "icon": {
+    "class": "glyphicon glyphicon-cog",
+    "src": ""
+  },
+  "disableServerSideExecution": false,
+  "disableBrowserSideExecution": false,
+  "writeAccessRequired": false,
+  "configStructure": []
+}
