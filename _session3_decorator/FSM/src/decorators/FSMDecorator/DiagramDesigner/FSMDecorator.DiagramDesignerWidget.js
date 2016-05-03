@@ -1,4 +1,4 @@
-/*globals define, _*/
+/*globals define, _, WebGMEGlobal*/
 /*jshint browser: true, camelcase: false*/
 /**
  * This decorator inherits from the ModelDecorator.DiagramDesignerWidget.
@@ -31,6 +31,16 @@ define([
         ModelDecoratorDiagramDesignerWidget.apply(this, [opts]);
 
         this.logger.debug('FSMDecorator ctor');
+        this.$resultIndicator = $('<span/>', {
+            text: 'Will indicate result'
+        });
+
+        //http://bootstrapdocs.com/v3.3.6/docs/javascript/#buttons
+        this.$runPluginBtn = $('<button/>', {
+            type: 'button',
+            class: 'btn btn-primary',
+            text: 'Generate Code'
+        });
     };
 
     FSMDecorator.prototype = Object.create(ModelDecoratorDiagramDesignerWidget.prototype);
@@ -45,9 +55,15 @@ define([
 
         // Call the base-class method..
         ModelDecoratorDiagramDesignerWidget.prototype.on_addTo.apply(this, arguments);
+
+        this.$el.append(this.$resultIndicator);
+        this.$el.append(this.$runPluginBtn);
+
+        this._checkForResult(client, nodeObj);
     };
 
     FSMDecorator.prototype.destroy = function () {
+        this.$runPluginBtn.off('click');
         ModelDecoratorDiagramDesignerWidget.prototype.destroy.apply(this, arguments);
     };
 
@@ -58,6 +74,54 @@ define([
         this.logger.debug('This node is on the canvas and received an update event', nodeObj);
 
         ModelDecoratorDiagramDesignerWidget.prototype.update.apply(this, arguments);
+
+        this._checkForResult(client, nodeObj);
+    };
+
+    FSMDecorator.prototype._checkForResult = function (client, nodeObj) {
+        var self = this,
+            assetHash = nodeObj.getAttribute('simulator'),
+            originHash = nodeObj.getAttribute('simulatorOrigin'),
+            project = client.getProjectObject();
+
+        if (assetHash) {
+            this.$resultIndicator.text('Code is attached!');
+            this.$runPluginBtn.css('display', 'none');
+            this.$runPluginBtn.off('click');
+            project.loadObject(client.getActiveCommitHash(), function (err, commitObj) {
+                if (err) {
+                    self.logger.error(err);
+                } else {
+                    self.logger.debug('commitObj', commitObj);
+                    if (commitObj.parents.indexOf(originHash) > -1) {
+                        self.$resultIndicator.text('Fresh simulator code');
+                        self.$resultIndicator.css('color', 'green');
+                    } else {
+                        self.$resultIndicator.text('Code might be outdated');
+                        self.$resultIndicator.css('color', 'orange');
+                    }
+                }
+            });
+        } else {
+            this.$resultIndicator.text('');
+            this.$runPluginBtn.css('display', 'inline-block');
+            this.$runPluginBtn.on('click', function () {
+                self.logger.debug('Clicked node', nodeObj.getAttribute('name'));
+                // See client API webgme/src/client/pluginmanager.js
+                var pluginContext = client.getCurrentPluginContext();
+
+                // By default the activeNode is the "opened" node, in our case we want the node with the btn defined.
+                pluginContext.managerConfig.activeNode = nodeObj.getId();
+
+                client.runBrowserPlugin('FSMCodeGenerator', pluginContext, function (err, pluginResult) {
+                    if (err) {
+                        self.logger.error(err);
+                    }
+
+                    self.logger.info('Plugin finished, awaiting update..');
+                });
+            });
+        }
     };
 
     return FSMDecorator;

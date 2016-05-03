@@ -30,7 +30,8 @@ Enable the `FSMDecorator` by selecting the check-box.
 
 #### Node registration
 To set the decorator for a node we edit the registry `decorator`. In the UI it is available under **Preferences** in the Property Editor.
-Since we want the decorator to be used for **StateMachine**s only, open the **StateMachine** Meta-node and set the decorator to `FSMDecorator`. 
+Since we want the decorator to be used for **StateMachine**s only, open the **StateMachine** Meta-node and set the decorator to `FSMDecorator`.
+(Since the registry follows inheritance all **StateMachine**s will now use the new decorator.)
 
 ## Debugging the code
 When debugging browser code it is advised to load the page via `debug.html`. That way the non-minified version of the webgme code will be loaded (including the libraries).
