@@ -13,12 +13,16 @@ config.visualization.decoratorPaths.push('src/decorators');
 
 
 
+config.visualization.panelPaths.push('src/visualizers/panels');
 
 
 // Visualizer descriptors
-
+config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');
 // Add requirejs paths
-
+config.requirejsPaths = {
+  'panels': './src/visualizers/panels',
+  'widgets': './src/visualizers/widgets'
+};
 
 
 config.mongo.uri = 'mongodb://127.0.0.1:27017/fsm';

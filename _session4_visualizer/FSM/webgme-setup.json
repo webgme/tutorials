@@ -10,10 +10,20 @@
       "FSMDecorator": {
         "src": "src/decorators/FSMDecorator"
       }
+    },
+    "visualizers": {
+      "FSMSimulator": {
+        "src": "panels/FSMSimulator/FSMSimulatorPanel",
+        "title": "FSMSimulator",
+        "panel": "src/visualizers/panels/id",
+        "secondary": false,
+        "widget": "src/visualizers/widgets/id"
+      }
     }
   },
   "dependencies": {
     "plugins": {},
-    "decorators": {}
+    "decorators": {},
+    "visualizers": {}
   }
 }
