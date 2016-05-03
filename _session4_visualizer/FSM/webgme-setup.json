@@ -1,0 +1,19 @@
+{
+  "components": {
+    "plugins": {
+      "FSMCodeGenerator": {
+        "src": "src/plugins/FSMCodeGenerator",
+        "test": "test/plugins/FSMCodeGenerator"
+      }
+    },
+    "decorators": {
+      "FSMDecorator": {
+        "src": "src/decorators/FSMDecorator"
+      }
+    }
+  },
+  "dependencies": {
+    "plugins": {},
+    "decorators": {}
+  }
+}
