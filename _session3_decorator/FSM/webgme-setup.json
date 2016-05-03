@@ -6,7 +6,11 @@
         "test": "test/plugins/FSMCodeGenerator"
       }
     },
-    "decorators": {}
+    "decorators": {
+      "FSMDecorator": {
+        "src": "src/decorators/FSMDecorator"
+      }
+    }
   },
   "dependencies": {
     "plugins": {},
