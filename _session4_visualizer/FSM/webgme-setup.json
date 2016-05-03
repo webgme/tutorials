@@ -15,9 +15,9 @@
       "FSMSimulator": {
         "src": "panels/FSMSimulator/FSMSimulatorPanel",
         "title": "FSMSimulator",
-        "panel": "src/visualizers/panels/id",
+        "panel": "src/visualizers/panels/FSMSimulator",
         "secondary": false,
-        "widget": "src/visualizers/widgets/id"
+        "widget": "src/visualizers/widgets/FSMSimulator"
       }
     }
   },
