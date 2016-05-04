@@ -30,6 +30,7 @@ define(['js/Constants',
         this._initWidgetEventHandlers();
 
         this._logger.debug('ctor finished');
+        this._initialLoaded = false;
     };
 
     FSMSimulatorControl.prototype._initWidgetEventHandlers = function () {
@@ -48,6 +49,7 @@ define(['js/Constants',
             self = this;
 
         self._logger.debug('activeObject nodeId \'' + nodeId + '\'');
+        self._initialLoaded = false;
 
         // Remove current territory patterns
         if (self._currentNodeId) {
@@ -60,7 +62,7 @@ define(['js/Constants',
         if (typeof self._currentNodeId === 'string') {
             // Put new node's info into territory rules
             self._selfPatterns = {};
-            self._selfPatterns[nodeId] = {children: 0};  // Territory "rule"
+            self._selfPatterns[nodeId] = {children: 1};  // Territory "rule"
 
             self._widget.setTitle(desc.name.toUpperCase());
 
@@ -79,15 +81,18 @@ define(['js/Constants',
             // Update the territory
             self._client.updateTerritory(self._territoryId, self._selfPatterns);
 
-            self._selfPatterns[nodeId] = {children: 1};
-            self._client.updateTerritory(self._territoryId, self._selfPatterns);
+            //self._selfPatterns[nodeId] = {children: 1};
+            //self._client.updateTerritory(self._territoryId, self._selfPatterns);
         }
     };
 
     // This next function retrieves the relevant node information for the widget
     FSMSimulatorControl.prototype._getObjectDescriptor = function (nodeId) {
         var nodeObj = this._client.getNode(nodeId),
-            objDescriptor;
+            metaNode,
+            objDescriptor = {
+                name: 'N/A'
+            };
 
         if (nodeObj) {
             objDescriptor = {
@@ -95,7 +100,16 @@ define(['js/Constants',
                 name: undefined,
                 childrenIds: undefined,
                 parentId: undefined,
-                isConnection: false
+                isConnection: false,
+                position: {
+                    x: 0,
+                    y: 0
+                },
+                connects: {
+                    src: null,
+                    dst: null
+                },
+                metaType: null
             };
 
             objDescriptor.id = nodeObj.getId();
@@ -104,6 +118,16 @@ define(['js/Constants',
             objDescriptor.childrenNum = objDescriptor.childrenIds.length;
             objDescriptor.parentId = nodeObj.getParentId();
             objDescriptor.isConnection = GMEConcepts.isConnection(nodeId);  // GMEConcepts can be helpful
+            if (objDescriptor.isConnection) {
+                objDescriptor.connects.src = nodeObj.getPointer('src').to;
+                objDescriptor.connects.dst = nodeObj.getPointer('dst').to;
+            }
+
+            // No need to register territory since the meta-nodes are always loaded and available.
+            metaNode = this._client.getNode(nodeObj.getMetaTypeId());
+            if (metaNode) {
+                objDescriptor.metaType = metaNode.getAttribute('name');
+            }
         }
 
         return objDescriptor;
@@ -112,24 +136,45 @@ define(['js/Constants',
     /* * * * * * * * Node Event Handling * * * * * * * */
     FSMSimulatorControl.prototype._eventCallback = function (events) {
         var i = events ? events.length : 0,
+            fsmData = {
+                simulatorUrl: null,
+                nodes: {}
+            },
             event;
 
         this._logger.debug('_eventCallback \'' + i + '\' items');
+        if (this._initialLoaded === false) {
+            this._initialLoaded = true;
+            this._logger.debug('events', events);
+            // In chrome
+            //console.table(events);
+            for (i = 0; i < events.length; i += 1) {
+                event = events[i];
+                if (event.etype === 'load') {
+                    fsmData.nodes[event.eid] = this._getObjectDescriptor(event.eid);
+                } else {
+                    this._logger.debug('Skipping event of type', event.etype);
+                }
+            }
 
-        while (i--) {
-            event = events[i];
-            switch (event.etype) {
-                case CONSTANTS.TERRITORY_EVENT_LOAD:
-                    this._onLoad(event.eid);
-                    break;
-                case CONSTANTS.TERRITORY_EVENT_UPDATE:
-                    this._onUpdate(event.eid);
-                    break;
-                case CONSTANTS.TERRITORY_EVENT_UNLOAD:
-                    this._onUnload(event.eid);
-                    break;
-                default:
-                    break;
+            this._widget.buildGraph(fsmData);
+        } else {
+            // We notify the widget that there were changes.
+            while (i--) {
+                event = events[i];
+                switch (event.etype) {
+                    case CONSTANTS.TERRITORY_EVENT_LOAD:
+                        this._onLoad(event.eid);
+                        break;
+                    case CONSTANTS.TERRITORY_EVENT_UPDATE:
+                        this._onUpdate(event.eid);
+                        break;
+                    case CONSTANTS.TERRITORY_EVENT_UNLOAD:
+                        this._onUnload(event.eid);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 

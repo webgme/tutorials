@@ -45,37 +45,21 @@ define(['css!./styles/FSMSimulatorWidget.css'], function () {
         this._logger.debug('Widget is resizing...');
     };
 
+    FSMSimulatorWidget.prototype.buildGraph = function (fsmData) {
+        this._logger.debug('fsmData', fsmData);
+    };
+
     // Adding/Removing/Updating items
     FSMSimulatorWidget.prototype.addNode = function (desc) {
-        if (desc) {
-            // Add node to a table of nodes
-            var node = document.createElement('div'),
-                label = 'children';
-
-            if (desc.childrenIds.length === 1) {
-                label = 'child';
-            }
-
-            this.nodes[desc.id] = desc;
-            node.innerHTML = 'Adding node "' + desc.name + '" (click to view). It has ' + 
-                desc.childrenIds.length + ' ' + label + '.';
-
-            this._el.append(node);
-            node.onclick = this.onNodeClick.bind(this, desc.id);
-        }
+        this._el.css('color', 'red');
     };
 
     FSMSimulatorWidget.prototype.removeNode = function (gmeId) {
-        var desc = this.nodes[gmeId];
-        this._el.append('<div>Removing node "' + desc.name + '"</div>');
-        delete this.nodes[gmeId];
+        this._el.css('color', 'red');
     };
 
     FSMSimulatorWidget.prototype.updateNode = function (desc) {
-        if (desc) {
-            this._logger.debug('Updating node:', desc);
-            this._el.append('<div>Updating node "' + desc.name + '"</div>');
-        }
+        this._el.css('color', 'red');
     };
 
     /* * * * * * * * Visualizer event handlers * * * * * * * */

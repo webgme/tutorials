@@ -8,12 +8,20 @@ active selection.
 
 ## Target
 Create a visualizer that uses the generated code from the FSMCodeGenerator to make a simple interactive finite-state-machine simulator.
-
-#### Detailed steps
 The visualizer should only be used from **StateMachine**s and when activated it will embed the generated simulator code as an
 [iframe](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe) HTML-element.
-
 Using the actual model it should get all the **States** and **Transition**s and build a graph of the model using [d3](https://d3js.org/).
+An input field with the event will be available in the canvas and users should be able to submit an event and the current state will be
+shown by coloring the nodes.
+
+#### Detailed steps
+
+1. Get the available **States** and **Transitions** in the model.
+2. Build the d3 graph based on the given model.
+3. Add input field with submit and make mock function to present result to user.
+4. Read the `simulator` attribute of the **StateMachine** and embed the blob-url in an `iframe`.
+5. Access the "global" defined class from the `iframe`.
+6. Add input field and hook up events from user to the simulator.
 
 ## Generate template code for a visualizer
 Using [webgme-cli](https://github.com/webgme/webgme-cli) we can create the visualizer template code using:
