@@ -11,6 +11,11 @@
         "src": "src/decorators/FSMDecorator"
       }
     },
+    "seeds": {
+      "FSM": {
+        "src": "src/seeds/FSM"
+      }
+    },
     "visualizers": {
       "FSMSimulator": {
         "src": "panels/FSMSimulator/FSMSimulatorPanel",

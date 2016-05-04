@@ -16,7 +16,7 @@ shown by coloring the nodes.
 
 #### Detailed steps
 
-1. Get the available **States** and **Transitions** in the model.
+1. Get the available **States** and **Transitions** in the model at start. Notify user about model changes.
 2. Build the d3 graph based on the given model.
 3. Add input field with submit and make mock function to present result to user.
 4. Read the `simulator` attribute of the **StateMachine** and embed the blob-url in an `iframe`.
