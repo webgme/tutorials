@@ -9,18 +9,25 @@ active selection.
 ## Target
 Create a visualizer that uses the generated code from the FSMCodeGenerator to make a simple interactive finite-state-machine simulator.
 
+#### Detailed steps
+The visualizer should only be used from **StateMachine**s and when activated it will embed the generated simulator code as an
+[iframe](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe) HTML-element.
+
+Using the actual model it should get all the **States** and **Transition**s and build a graph of the model using [d3](https://d3js.org/).
+
 ## Generate template code for a visualizer
 Using [webgme-cli](https://github.com/webgme/webgme-cli) we can create the visualizer template code using:
  ```
  webgme new viz FSMSimulator
  ```
-This creates a new visualizer at '/src/decorators'. 
-- `FSMDecorator.js` - Defines the decorator as a javascript class-like object exposed as an requirejs AMD module. Also defines the supported Widgets.
-- `/DiagramDesigner/FSMDecorator.DiagramDesignerWidget.js` - Defines the behavior of the decorator when used in e.g. the ModelEditor.
-- `/DiagramDesigner/FSMDecorator.PartBrowserWidget.js` - Defines the behavior of the decorator when used in the PartBrowser.
+This creates a new visualizer at '/src/visualizers'. 
+- `/panels/FSMSimulator/FSMSimulatorPanel.js` - Defines the visualizer as a javascript class-like object exposed as an requirejs AMD module. It glues the controller and widget together.
+- `/panels/FSMSimulator/FSMSimulatorControl.js` - This is where the interaction with gme-client takes place, e.g., defining territories and accessing data from the nodes.
+- `/widgets/FSMSimulator/FSMSimulatorWidget.js` - Defines the behavior of the visualization based on input from the controller.
 
-The new decorator is made available for the decorator-manager (as a requirejs module) by adding its path to the `visualization.decoratorPaths` in [config.plugin](https://github.com/webgme/webgme/tree/master/config#visualization).
-Lastly the `webgme-setup.json` populated with info that this decorator is defined in this particular repository, this will expose it to other users of [webgme-cli](https://github.com/webgme/webgme-cli).
+The new visualizer is made available for the UI (as a requirejs module) by adding metadata to `visualizers/Visualizers.json` which in turn is 
+made available in `visualizerDescriptors` in [config.visualization](https://github.com/webgme/webgme/tree/master/config#visualization).
+Again, the `webgme-setup.json` is populated with info that this visualizer is defined in this particular repository. This will expose it to other users of [webgme-cli](https://github.com/webgme/webgme-cli).
 
 ## Register the visualizer
 Visualizers are registered to nodes and are stored under the registry `validVisualizers`. In the UI it is available under **META** in the Property Editor.
