@@ -123,6 +123,8 @@ define(['js/Constants',
                 objDescriptor.connects.dst = nodeObj.getPointer('dst').to;
             }
 
+            objDescriptor.position = nodeObj.getRegistry('position');
+
             // No need to register territory since the meta-nodes are always loaded and available.
             metaNode = this._client.getNode(nodeObj.getMetaTypeId());
             if (metaNode) {
@@ -157,7 +159,7 @@ define(['js/Constants',
                 }
             }
 
-            this._widget.buildGraph(fsmData);
+            this._widget.populateGraph(fsmData);
         } else {
             // We notify the widget that there were changes.
             while (i--) {
