@@ -1,4 +1,22 @@
 {
-  "components": {},
-  "dependencies": {}
+  "components": {
+    "addons": {},
+    "decorators": {},
+    "layouts": {},
+    "plugins": {},
+    "seeds": {
+      "FSM": {
+        "src": "src/seeds/FSM"
+      }
+    },
+    "visualizers": {}
+  },
+  "dependencies": {
+    "addons": {},
+    "decorators": {},
+    "layouts": {},
+    "plugins": {},
+    "seeds": {},
+    "visualizers": {}
+  }
 }
