@@ -6,10 +6,12 @@
 
 define(['js/Constants',
     'js/Utils/GMEConcepts',
-    'js/NodePropertyNames'
+    'js/NodePropertyNames',
+    'blob/BlobClient'
 ], function (CONSTANTS,
              GMEConcepts,
-             nodePropertyNames) {
+             nodePropertyNames,
+             BlobClient) {
 
     'use strict';
 
@@ -20,6 +22,7 @@ define(['js/Constants',
         this._logger = options.logger.fork('Control');
 
         this._client = options.client;
+        this._blobClient = new BlobClient({logger: this._logger.fork('BlobClient')});
 
         // Initialize core collections and variables
         this._widget = options.widget;
@@ -109,6 +112,7 @@ define(['js/Constants',
                     src: null,
                     dst: null
                 },
+                event: null,
                 metaType: null
             };
 
@@ -121,6 +125,7 @@ define(['js/Constants',
             if (objDescriptor.isConnection) {
                 objDescriptor.connects.src = nodeObj.getPointer('src').to;
                 objDescriptor.connects.dst = nodeObj.getPointer('dst').to;
+                objDescriptor.event = nodeObj.getAttribute('event');
             }
 
             objDescriptor.position = nodeObj.getRegistry('position');
@@ -142,6 +147,7 @@ define(['js/Constants',
                 simulatorUrl: null,
                 nodes: {}
             },
+            nodeObj,
             event;
 
         this._logger.debug('_eventCallback \'' + i + '\' items');
@@ -153,7 +159,13 @@ define(['js/Constants',
             for (i = 0; i < events.length; i += 1) {
                 event = events[i];
                 if (event.etype === 'load') {
-                    fsmData.nodes[event.eid] = this._getObjectDescriptor(event.eid);
+                    if (event.eid === this._currentNodeId) {
+                        nodeObj = this._client.getNode(event.eid);
+                        fsmData.simulatorUrl = this._blobClient.getViewURL(nodeObj.getAttribute('simulator'),
+                            'index.html');
+                    } else {
+                        fsmData.nodes[event.eid] = this._getObjectDescriptor(event.eid);
+                    }
                 } else {
                     this._logger.debug('Skipping event of type', event.etype);
                 }

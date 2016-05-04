@@ -18,6 +18,8 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
 
         this.nodes = {};
         this._initialize();
+        this._simEl = null;
+        this._simulator = null;
 
         this._logger.debug('ctor finished');
     };
@@ -32,6 +34,7 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
 
         // Create indication header
         this._headerEl = $('<h3>');
+        this._el.append(this._headerEl);
         this._el.append(this._headerEl);
 
         // Create the d3
@@ -50,48 +53,111 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
     FSMSimulatorWidget.prototype.onWidgetContainerResize = function (width, height) {
         this._logger.debug('Widget is resizing...');
 
-        this._svgD3 = d3.select(this._el[0]).append('svg')
+        this._svgD3
             .attr('width', width)
             .attr('height', height);
     };
 
     FSMSimulatorWidget.prototype.populateGraph = function (fsmData) {
         var key,
+            srcNode,
+            dstNode,
+            y_pos,
             node;
 
         this._logger.debug('fsmData', fsmData);
-        this._gmeIdToData = fsmData.nodes;
-        this._gmeIdToSvg = {};
+        this._gmeIdToData = {};
 
+        //TODO: refactor this and do it in better order (connections first).
         for (key in fsmData.nodes) {
             node = fsmData.nodes[key];
-            if (node.metaType === 'State') {
-                this._gmeIdToSvg[key] = this._svgD3.append("circle")
+            if (this._gmeIdToData.hasOwnProperty(key) === false) {
+                this._gmeIdToData[key] = {
+                    data: null,
+                    circle: null,
+                    title: null,
+                    line: null,
+                    labels: []
+                }
+            }
+
+            this._gmeIdToData[key].data = node;
+            if (node.metaType === 'State' || node.metaType === 'Initial' || node.metaType === 'End') {
+                this._gmeIdToData[key].circle = this._svgD3.append("circle")
                     .attr("cx", node.position.x)
                     .attr("cy", node.position.y)
-                    .attr("r", 15)
+                    .attr("r", 20)
                     .attr('fill', 'gray');
-            } else if (node.metaType === 'Initial') {
-                this._gmeIdToSvg[key] = this._svgD3.append("circle")
-                    .attr("cx", node.position.x)
-                    .attr("cy", node.position.y)
-                    .attr("r", 15)
-                    .attr('fill', 'green');
-            } else if (node.metaType === 'End') {
-                this._gmeIdToSvg[key] = this._svgD3.append("circle")
-                    .attr("cx", node.position.x)
-                    .attr("cy", node.position.y)
-                    .attr("r", 15)
-                    .attr('fill', 'purple');
+
+                if (node.metaType === 'Initial') {
+                    this._gmeIdToData[key].circle.attr('fill', 'green');
+                } else if (node.metaType === 'End') {
+                    this._gmeIdToData[key].circle.attr('fill', 'purple');
+                }
+
+                this._gmeIdToData[key].title = this._svgD3.append("text")
+                    .attr("x", node.position.x)
+                    .attr("y", node.position.y)
+                    .text(function (d) {
+                        return node.name;
+                    })
+                    .attr('fill', 'black');
             } else if (node.isConnection) {
-                this._gmeIdToSvg[key] = this._svgD3.append("line")
-                    .attr("x1", this._gmeIdToData[node.connects.src].position.x)
-                    .attr("y1", this._gmeIdToData[node.connects.src].position.y)
-                    .attr("x2", this._gmeIdToData[node.connects.dst].position.x)
-                    .attr("y2", this._gmeIdToData[node.connects.dst].position.y)
+                srcNode = fsmData.nodes[node.connects.src];
+                dstNode = fsmData.nodes[node.connects.dst];
+                this._gmeIdToData[key].line = this._svgD3.append("line")
+                    .attr("x1", srcNode.position.x)
+                    .attr("y1", srcNode.position.y)
+                    .attr("x2", dstNode.position.x)
+                    .attr("y2", dstNode.position.y)
                     .attr('stroke-width', 1)
                     .attr('stroke', 'black');
+
+                if (this._gmeIdToData.hasOwnProperty(srcNode.id) === false) {
+                    this._gmeIdToData[srcNode.id] = {
+                        data: null,
+                        circle: null,
+                        title: null,
+                        line: null,
+                        labels: []
+                    }
+                }
+                //TODO: labels should have association with target.
+                y_pos = srcNode.position.y + 30 + 15 * this._gmeIdToData[srcNode.id].labels.length;
+                this._gmeIdToData[srcNode.id].labels.push(this._svgD3.append("text")
+                    .attr("x", srcNode.position.x)
+                    .attr("y", y_pos)
+                    .text(function (d) {
+                        return node.name + ' -> ' + node.event;
+                    })
+                    .attr('fill', 'black'));
             }
+        }
+
+        //setTimeout(function () {
+        //    tt.transition()
+        //        .duration(300)
+        //        .attr('r', 30)
+        //        .transition()
+        //        .delay(400)
+        //        .attr('fill', 'red')
+        //        .attr('r', 15);
+        //}, 3000);
+        this._embedSimulator(fsmData);
+    };
+
+    FSMSimulatorWidget.prototype._embedSimulator = function (fsmData) {
+        var self = this;
+        if (this._simEl === null) {
+            this._simEl = $( '<iframe id="FSMSimulator" src="' + fsmData.simulatorUrl +
+                '" width="0" height="0"></iframe>' );
+            this._el.append(this._simEl);
+            this._simEl.on('load', function () {
+                self._simulator = self._simEl[0].contentWindow.FSM;
+                self._logger.debug('Simulator is loaded', self._simulator);
+                // TODO: At this point add an input-field and simulator "control"
+                // TODO: Hook it up with the graph.
+            });
         }
     };
 
