@@ -1,0 +1,79 @@
+<%
+var i, j,
+        outerIf = '        if',
+        innerIf = '            if',
+        initialStateName;
+
+for (i = 0; i < stateMachine.states.length; i += 1) {
+    if (stateMachine.states[i].id === stateMachine.initialState) {
+        initialStateName = stateMachine.states[i].name;
+        break;
+    }
+}
+
+%>
+var FSM = {};
+
+/**
+ * @param {function(string)} log - Out put goes here, e.g. console.log.
+ */
+FSM.Simulator = function (log) {
+    'use strict';
+    var finalStates = [],
+        self = this;
+
+    this.currentState = '<%=initialStateName%>';
+    this.currentStateId = '<%=stateMachine.initialState%>';
+    this.possibleEvents = [];
+    this.atEnd = false;
+
+<%for (i = 0; i < stateMachine.finalStates.length; i += 1) {%>    finalStates.push('<%=stateMachine.finalStates[i]%>');
+<%}%>
+    this.initialize = function () {
+        self.currentState = '<%=initialStateName%>';
+        self.currentStateId = '<%=stateMachine.initialState%>';
+        self.possibleEvents = [];
+        self.atEnd = false;
+        self.enterEvent();
+    };
+
+    this.enterEvent = function (currentInput) {
+<%for (i = 0; i < stateMachine.states.length; i += 1) {
+    var eventStr = '';
+    if (stateMachine.states[i].transitions.length === 0) {
+        continue;
+    }
+    innerIf = '            if';%><%=outerIf%> (self.currentStateId === "<%=stateMachine.states[i].id%>") {
+<%for (j = 0; j < stateMachine.states[i].transitions.length; j += 1) {
+    var transition = stateMachine.states[i].transitions[j];
+    eventStr += ', "' + transition.event + '"';
+%><%=innerIf%> (currentInput === '<%=transition.event%>') {
+                log('Switching state to <%=transition.targetName%> (<%=transition.targetId%>)');
+                self.currentStateId = '<%=transition.targetId%>';
+                self.currentState = '<%=transition.targetName%>';
+                self.enterEvent();
+            }<%if (j === stateMachine.states[i].transitions.length - 1) {%> else {
+                self.possibleEvents = [<%=eventStr.substring(2)%>];
+                log('Possible events for transition(s): <%=eventStr.substring(2)%>');
+            }<%}innerIf = ' else if';}%>
+        }<%outerIf = ' else if';}%>
+
+        if (currentInput === 'exit') {
+            self.atEnd = true;
+        } else if (finalStates.indexOf(self.currentStateId) !== -1) {
+            log('At a final state ' + self.currentState + '(' + self.currentStateId + ')');
+            self.atEnd = true;
+        }
+    };
+
+    this.getPossibleEvents = function () {
+        return self.possibleEvents;
+    };
+
+    this.getCurrentState = function () {
+        return {
+            id: self.currentStateId,
+            name: self.currentState
+        };
+    };
+};
