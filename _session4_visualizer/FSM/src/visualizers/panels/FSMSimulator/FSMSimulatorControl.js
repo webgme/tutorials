@@ -109,8 +109,8 @@ define(['js/Constants',
                     y: 0
                 },
                 connects: {
-                    src: null,
-                    dst: null
+                    srcId: null,
+                    dstId: null
                 },
                 event: null,
                 metaType: null
@@ -123,8 +123,8 @@ define(['js/Constants',
             objDescriptor.parentId = nodeObj.getParentId();
             objDescriptor.isConnection = GMEConcepts.isConnection(nodeId);  // GMEConcepts can be helpful
             if (objDescriptor.isConnection) {
-                objDescriptor.connects.src = nodeObj.getPointer('src').to;
-                objDescriptor.connects.dst = nodeObj.getPointer('dst').to;
+                objDescriptor.connects.srcId = nodeObj.getPointer('src').to;
+                objDescriptor.connects.dstId = nodeObj.getPointer('dst').to;
                 objDescriptor.event = nodeObj.getAttribute('event');
             }
 
@@ -145,7 +145,7 @@ define(['js/Constants',
         var i = events ? events.length : 0,
             fsmData = {
                 simulatorUrl: null,
-                nodes: {}
+                descriptors: {}
             },
             nodeObj,
             event;
@@ -164,7 +164,7 @@ define(['js/Constants',
                         fsmData.simulatorUrl = this._blobClient.getViewURL(nodeObj.getAttribute('simulator'),
                             'index.html');
                     } else {
-                        fsmData.nodes[event.eid] = this._getObjectDescriptor(event.eid);
+                        fsmData.descriptors[event.eid] = this._getObjectDescriptor(event.eid);
                     }
                 } else {
                     this._logger.debug('Skipping event of type', event.etype);

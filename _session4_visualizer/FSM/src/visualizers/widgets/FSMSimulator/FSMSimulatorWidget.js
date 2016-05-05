@@ -35,18 +35,19 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
         // Create indication header
         this._headerEl = $('<h3>');
         this._el.append(this._headerEl);
+        this._headerEl.css('color', 'red');
 
         // Larger html snippets should ideally be defined in html-files and include using require-text (text!<path>).
         this._inputGroup = $(
             '<div class="input-group">' +
-            '<span class="input-group-btn">' +
-                '<button class="btn btn-primary go-btn" type="button">Go!</button>' +
-            '</span>' +
-            '<input type="text" class="form-control" placeholder="Enter an event...">' +
+                '<span class="input-group-btn">' +
+                    '<button class="btn btn-primary go-btn" type="button">Go!</button>' +
+                '</span>' +
+                '<input type="text" class="form-control" placeholder="Enter an event...">' +
                 '<span class="input-group-btn">' +
                     '<button class="btn btn-warning start-btn" type="button">Initialize</button>' +
                 '</span>' +
-        '</div>');
+            '</div>');
 
         this._el.append(this._inputGroup);
 
@@ -57,9 +58,10 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
 
         this._startBtn.on('click', function () {
             var stateId,
-                stateNode,
+                stateData,
                 key,
                 helpMessage;
+
             if (self._simulator === null) {
                 self._logger.error('Simulator not available at init');
                 return;
@@ -67,8 +69,8 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
 
             // Clean up all state decoration.
             for (key in self._idToState) {
-                stateNode = self._idToState[key];
-                stateNode.circle.attr('fill', stateNode.defaultColor);
+                stateData = self._idToState[key];
+                stateData.d3Item.attr('fill', stateData.defaultColor);
             }
 
             self._simulator.initialize();
@@ -89,6 +91,7 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
                 stateId,
                 event,
                 helpMessage;
+
             if (self._simulator === null) {
                 self._logger.error('Simulator not available at go');
                 return;
@@ -101,8 +104,9 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
             event = self._inputField.val();
             self._simulator.enterEvent(event);
 
-            // get the newly calculated event.
+            // get the newly calculated state.
             stateId = self._simulator.getCurrentState().id;
+
             self._setState(stateId, prevStateId);
             if (self._simulator.atEnd === true) {
                 helpMessage = 'At an end state, reinitialize the simulator.';
@@ -134,78 +138,112 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
 
     FSMSimulatorWidget.prototype.populateGraph = function (fsmData) {
         var key,
-            srcNode,
-            dstNode,
-            jointId,
-            node;
+            desc;
 
         this._logger.debug('fsmData', fsmData);
         this._idToState = {};
-        this._jointIdToTransitions = {};
+        this._idToTransition = {};
 
-        //TODO: refactor this and do it in better order (connections first).
-        for (key in fsmData.nodes) {
-            node = fsmData.nodes[key];
-            if (node.metaType === 'State' || node.metaType === 'Initial' || node.metaType === 'End') {
+        for (key in fsmData.descriptors) {
+            desc = fsmData.descriptors[key];
+            if (desc.metaType === 'State' || desc.metaType === 'Initial' || desc.metaType === 'End') {
                 this._idToState[key] = {
-                    data: node,
-                    circle: null,
+                    desc: desc,
+                    d3Item: null,
                     title: null,
                     defaultColor: null
                 };
-
-                this._idToState[key].circle = this._svgD3.append("circle")
-                    .attr("cx", node.position.x)
-                    .attr("cy", node.position.y)
-                    .attr("r", 20)
-                    .attr('fill', 'gray');
-                this._idToState[key].defaultColor = 'gray';
-
-                if (node.metaType === 'Initial') {
-                    this._idToState[key].circle.attr('fill', 'green');
-                    this._idToState[key].defaultColor = 'green';
-                } else if (node.metaType === 'End') {
-                    this._idToState[key].circle.attr('fill', 'purple');
-                    this._idToState[key].defaultColor = 'purple';
-                }
-
-                this._idToState[key].title = this._svgD3.append("text")
-                    .attr("x", node.position.x)
-                    .attr("y", node.position.y)
-                    .text(function (d) {
-                        return node.name;
-                    })
-                    .attr('fill', 'black');
-            } else if (node.isConnection) {
-                srcNode = fsmData.nodes[node.connects.src];
-                dstNode = fsmData.nodes[node.connects.dst];
-
-                //TODO: Use joint id
-                this._jointIdToTransitions[key] = {};
-
-                this._jointIdToTransitions[key].line = this._svgD3.append("line")
-                    .attr("x1", srcNode.position.x)
-                    .attr("y1", srcNode.position.y)
-                    .attr("x2", dstNode.position.x)
-                    .attr("y2", dstNode.position.y)
-                    .attr('stroke-width', 1)
-                    .attr('stroke', 'black');
+            } else if (desc.metaType === 'Transition' && desc.isConnection) {
+                this._idToTransition[key] = {
+                    desc: desc,
+                    d3Item: null
+                };
             }
         }
 
+        this._addTransitionsToGraph();
+
+        this._addStatesToGraph();
+
         this._embedSimulator(fsmData);
+    };
+
+    FSMSimulatorWidget.prototype._addStatesToGraph = function () {
+        var key,
+            stateData;
+
+        for (key in this._idToState) {
+            stateData = this._idToState[key];
+            this._idToState[key].d3Item = this._svgD3.append('circle')
+                .attr('cx', stateData.desc.position.x)
+                .attr('cy', stateData.desc.position.y)
+                .attr('r', 20)
+                .attr('fill', 'gray');
+
+            this._idToState[key].defaultColor = 'gray';
+
+            if (stateData.desc.metaType === 'Initial') {
+                this._idToState[key].d3Item.attr('fill', 'green');
+                this._idToState[key].defaultColor = 'green';
+            } else if (stateData.desc.metaType === 'End') {
+                this._idToState[key].d3Item.attr('fill', 'purple');
+                this._idToState[key].defaultColor = 'purple';
+            }
+
+            stateData.title = this._svgD3.append('text')
+                .attr('x', stateData.desc.position.x - 20)
+                .attr('y', stateData.desc.position.y - 25)
+                .text(function () {
+                    return stateData.desc.name;
+                })
+                .attr('fill', 'black');
+        }
+    };
+
+    FSMSimulatorWidget.prototype._addTransitionsToGraph = function () {
+        var key,
+            transData,
+            srcDesc,
+            dstDesc;
+
+        for (key in this._idToTransition) {
+            transData = this._idToTransition[key];
+
+            srcDesc = this._idToState[transData.desc.connects.srcId].desc;
+            dstDesc = this._idToState[transData.desc.connects.dstId].desc;
+
+            transData.d3Item = this._svgD3.append('line')
+                .attr('x1', srcDesc.position.x)
+                .attr('y1', srcDesc.position.y)
+                .attr('x2', dstDesc.position.x)
+                .attr('y2', dstDesc.position.y)
+                .attr('stroke-width', 1)
+                .attr('stroke', 'black');
+        }
     };
 
     FSMSimulatorWidget.prototype._embedSimulator = function (fsmData) {
         var self = this;
         if (this._simEl === null) {
+            if (typeof fsmData.simulatorUrl !== 'string') {
+                self._headerEl.text('No simulator is attached.');
+                return;
+            }
+
             this._simEl = $( '<iframe id="FSMSimulator" src="' + fsmData.simulatorUrl +
                 '" width="0" height="0"></iframe>' );
             this._el.append(this._simEl);
+
             this._simEl.on('load', function () {
                 var FSM = self._simEl[0].contentWindow.FSM;
+                if (!FSM || FSM.hasOwnProperty('Simulator') === false) {
+                    self._headerEl.text('Attached simulator not right format.');
+                    return;
+                }
                 self._simulator = new FSM.Simulator(self._logger.debug);
                 self._logger.debug('Simulator is loaded', self._simulator);
+
+                // Update the UI controls displayed.
                 self._inputGroup.show();
                 self._goBtn.prop('disabled', true);
                 self._inputField.prop('placeholder', 'Initialize simulator..');
@@ -213,25 +251,26 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
         }
     };
 
-    FSMSimulatorWidget.prototype._setState = function (state, prevState) {
-        var newStateNode = this._idToState[state].circle,
-            prevStateNode,
+    FSMSimulatorWidget.prototype._setState = function (stateId, prevStateId) {
+        var newStateData = this._idToState[stateId],
+            prevStateData,
             delay = 0;
 
-        if (prevState && prevState !== state) {
-            prevStateNode = this._idToState[prevState].circle;
-            prevStateNode.transition()
+        if (prevStateId && prevStateId !== stateId) {
+            prevStateData = this._idToState[prevStateId];
+            prevStateData.d3Item.transition()
                 .duration(300)
                 .attr('r', 10)
                 .delay(400)
                 .transition()
                 .duration(300)
                 .attr('r', 20)
-                .attr('fill', this._idToState[prevState].defaultColor);
+                .attr('fill', prevStateData.defaultColor);
             delay = 400;
+
         }
 
-        newStateNode.transition()
+        newStateData.d3Item.transition()
             .delay(delay)
             .duration(300)
             .attr('r', 40)
@@ -244,17 +283,14 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
 
     // Adding/Removing/Updating items
     FSMSimulatorWidget.prototype.addNode = function (desc) {
-        this._headerEl.css('color', 'red');
         this._headerEl.text('Current model may have changed.');
     };
 
     FSMSimulatorWidget.prototype.removeNode = function (gmeId) {
-        this._headerEl.css('color', 'red');
         this._headerEl.text('Current model may have changed.');
     };
 
     FSMSimulatorWidget.prototype.updateNode = function (desc) {
-        this._headerEl.css('color', 'red');
         this._headerEl.text('Current model may have changed.');
     };
 
