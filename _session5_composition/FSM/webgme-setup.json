@@ -1,0 +1,31 @@
+{
+  "components": {
+    "addons": {},
+    "decorators": {},
+    "layouts": {},
+    "plugins": {
+      "FSMCodeGenerator": {
+        "src": "src/plugins/FSMCodeGenerator",
+        "test": "test/plugins/FSMCodeGenerator"
+      },
+      "SignalMachineExplorer": {
+        "src": "src/plugins/SignalMachineExplorer",
+        "test": "test/plugins/SignalMachineExplorer"
+      }
+    },
+    "seeds": {
+      "FSM": {
+        "src": "src/seeds/FSM"
+      }
+    },
+    "visualizers": {}
+  },
+  "dependencies": {
+    "addons": {},
+    "decorators": {},
+    "layouts": {},
+    "plugins": {},
+    "seeds": {},
+    "visualizers": {}
+  }
+}
