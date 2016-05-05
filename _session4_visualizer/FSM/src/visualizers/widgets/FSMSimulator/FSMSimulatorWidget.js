@@ -35,19 +35,93 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
         // Create indication header
         this._headerEl = $('<h3>');
         this._el.append(this._headerEl);
-        this._el.append(this._headerEl);
+
+        // Larger html snippets should ideally be defined in html-files and include using require-text (text!<path>).
+        this._inputGroup = $(
+            '<div class="input-group">' +
+            '<span class="input-group-btn">' +
+                '<button class="btn btn-primary go-btn" type="button">Go!</button>' +
+            '</span>' +
+            '<input type="text" class="form-control" placeholder="Enter an event...">' +
+                '<span class="input-group-btn">' +
+                    '<button class="btn btn-warning start-btn" type="button">Initialize</button>' +
+                '</span>' +
+        '</div>');
+
+        this._el.append(this._inputGroup);
+
+        // Using jquery selector https://api.jquery.com/category/selectors/
+        this._inputField = this._inputGroup.find('input');
+        this._goBtn = this._inputGroup.find('.go-btn');
+        this._startBtn = this._inputGroup.find('.start-btn');
+
+        this._startBtn.on('click', function () {
+            var stateId,
+                stateNode,
+                key,
+                helpMessage;
+            if (self._simulator === null) {
+                self._logger.error('Simulator not available at init');
+                return;
+            }
+
+            // Clean up all state decoration.
+            for (key in self._idToState) {
+                stateNode = self._idToState[key];
+                stateNode.circle.attr('fill', stateNode.defaultColor);
+            }
+
+            self._simulator.initialize();
+
+            stateId = self._simulator.getCurrentState().id;
+            self._setState(stateId);
+
+            helpMessage = 'Enter an event: ' + self._simulator.getPossibleEvents();
+            self._inputField.attr('placeholder', helpMessage);
+            self._inputField.attr('title', helpMessage);
+
+            self._goBtn.prop('disabled', false);
+
+        });
+
+        this._goBtn.on('click', function () {
+            var prevStateId,
+                stateId,
+                event,
+                helpMessage;
+            if (self._simulator === null) {
+                self._logger.error('Simulator not available at go');
+                return;
+            }
+
+            // Store the previous state.
+            prevStateId = self._simulator.getCurrentState().id;
+
+            // Input the event..
+            event = self._inputField.val();
+            self._simulator.enterEvent(event);
+
+            // get the newly calculated event.
+            stateId = self._simulator.getCurrentState().id;
+            self._setState(stateId, prevStateId);
+            if (self._simulator.atEnd === true) {
+                helpMessage = 'At an end state, reinitialize the simulator.';
+                self._goBtn.prop('disabled', true);
+            } else {
+                helpMessage = 'Enter an event: ' + self._simulator.getPossibleEvents();
+            }
+
+            self._inputField.attr('placeholder', helpMessage);
+            self._inputField.attr('title', helpMessage);
+            self._inputField.val('');
+        });
+
+        this._inputGroup.hide();
 
         // Create the d3
         this._svgD3 = d3.select(this._el[0]).append('svg')
             .attr('width', width)
             .attr('height', height);
-
-        // Registering to events can be done with jQuery (as normal)
-        this._el.on('dblclick', function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-            self.onBackgroundDblClick();
-        });
     };
 
     FSMSimulatorWidget.prototype.onWidgetContainerResize = function (width, height) {
@@ -62,40 +136,40 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
         var key,
             srcNode,
             dstNode,
-            y_pos,
+            jointId,
             node;
 
         this._logger.debug('fsmData', fsmData);
-        this._gmeIdToData = {};
+        this._idToState = {};
+        this._jointIdToTransitions = {};
 
         //TODO: refactor this and do it in better order (connections first).
         for (key in fsmData.nodes) {
             node = fsmData.nodes[key];
-            if (this._gmeIdToData.hasOwnProperty(key) === false) {
-                this._gmeIdToData[key] = {
-                    data: null,
+            if (node.metaType === 'State' || node.metaType === 'Initial' || node.metaType === 'End') {
+                this._idToState[key] = {
+                    data: node,
                     circle: null,
                     title: null,
-                    line: null,
-                    labels: []
-                }
-            }
+                    defaultColor: null
+                };
 
-            this._gmeIdToData[key].data = node;
-            if (node.metaType === 'State' || node.metaType === 'Initial' || node.metaType === 'End') {
-                this._gmeIdToData[key].circle = this._svgD3.append("circle")
+                this._idToState[key].circle = this._svgD3.append("circle")
                     .attr("cx", node.position.x)
                     .attr("cy", node.position.y)
                     .attr("r", 20)
                     .attr('fill', 'gray');
+                this._idToState[key].defaultColor = 'gray';
 
                 if (node.metaType === 'Initial') {
-                    this._gmeIdToData[key].circle.attr('fill', 'green');
+                    this._idToState[key].circle.attr('fill', 'green');
+                    this._idToState[key].defaultColor = 'green';
                 } else if (node.metaType === 'End') {
-                    this._gmeIdToData[key].circle.attr('fill', 'purple');
+                    this._idToState[key].circle.attr('fill', 'purple');
+                    this._idToState[key].defaultColor = 'purple';
                 }
 
-                this._gmeIdToData[key].title = this._svgD3.append("text")
+                this._idToState[key].title = this._svgD3.append("text")
                     .attr("x", node.position.x)
                     .attr("y", node.position.y)
                     .text(function (d) {
@@ -105,44 +179,20 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
             } else if (node.isConnection) {
                 srcNode = fsmData.nodes[node.connects.src];
                 dstNode = fsmData.nodes[node.connects.dst];
-                this._gmeIdToData[key].line = this._svgD3.append("line")
+
+                //TODO: Use joint id
+                this._jointIdToTransitions[key] = {};
+
+                this._jointIdToTransitions[key].line = this._svgD3.append("line")
                     .attr("x1", srcNode.position.x)
                     .attr("y1", srcNode.position.y)
                     .attr("x2", dstNode.position.x)
                     .attr("y2", dstNode.position.y)
                     .attr('stroke-width', 1)
                     .attr('stroke', 'black');
-
-                if (this._gmeIdToData.hasOwnProperty(srcNode.id) === false) {
-                    this._gmeIdToData[srcNode.id] = {
-                        data: null,
-                        circle: null,
-                        title: null,
-                        line: null,
-                        labels: []
-                    }
-                }
-                //TODO: labels should have association with target.
-                y_pos = srcNode.position.y + 30 + 15 * this._gmeIdToData[srcNode.id].labels.length;
-                this._gmeIdToData[srcNode.id].labels.push(this._svgD3.append("text")
-                    .attr("x", srcNode.position.x)
-                    .attr("y", y_pos)
-                    .text(function (d) {
-                        return node.name + ' -> ' + node.event;
-                    })
-                    .attr('fill', 'black'));
             }
         }
 
-        //setTimeout(function () {
-        //    tt.transition()
-        //        .duration(300)
-        //        .attr('r', 30)
-        //        .transition()
-        //        .delay(400)
-        //        .attr('fill', 'red')
-        //        .attr('r', 15);
-        //}, 3000);
         this._embedSimulator(fsmData);
     };
 
@@ -153,12 +203,43 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
                 '" width="0" height="0"></iframe>' );
             this._el.append(this._simEl);
             this._simEl.on('load', function () {
-                self._simulator = self._simEl[0].contentWindow.FSM;
+                var FSM = self._simEl[0].contentWindow.FSM;
+                self._simulator = new FSM.Simulator(self._logger.debug);
                 self._logger.debug('Simulator is loaded', self._simulator);
-                // TODO: At this point add an input-field and simulator "control"
-                // TODO: Hook it up with the graph.
+                self._inputGroup.show();
+                self._goBtn.prop('disabled', true);
+                self._inputField.prop('placeholder', 'Initialize simulator..');
             });
         }
+    };
+
+    FSMSimulatorWidget.prototype._setState = function (state, prevState) {
+        var newStateNode = this._idToState[state].circle,
+            prevStateNode,
+            delay = 0;
+
+        if (prevState && prevState !== state) {
+            prevStateNode = this._idToState[prevState].circle;
+            prevStateNode.transition()
+                .duration(300)
+                .attr('r', 10)
+                .delay(400)
+                .transition()
+                .duration(300)
+                .attr('r', 20)
+                .attr('fill', this._idToState[prevState].defaultColor);
+            delay = 400;
+        }
+
+        newStateNode.transition()
+            .delay(delay)
+            .duration(300)
+            .attr('r', 40)
+            .delay(400)
+            .transition()
+            .duration(300)
+            .attr('r', 20)
+            .attr('fill', 'red');
     };
 
     // Adding/Removing/Updating items
