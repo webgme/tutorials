@@ -271,6 +271,8 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
 
     /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
     FSMSimulatorWidget.prototype.destroy = function () {
+        this._goBtn.off('click');
+        this._startBtn.off('click');
     };
 
     FSMSimulatorWidget.prototype.onActivate = function () {
