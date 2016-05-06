@@ -1,28 +1,22 @@
-## Initialize the repository
-With [webgme-cli](https://github.com/webgme/webgme-cli) installed the command `webgme` should be available.
-To create a new webgme domain repository from a terminal invoke:
- ```
- webgme init FSM
- ```
-This will create a folder `FSM` with the [`package.json`](https://docs.npmjs.com/files/package.json) 
-needed for a (node)npm repository. It also contains the webgme specific [config](https://github.com/webgme/webgme/tree/master/config) directory
-and `webgme-setup.json`. The latter contains metadata about the webgme components this repo
-defines or imports from another webgme domain repo and is used and maintained by [webgme-cli](https://github.com/webgme/webgme-cli). At this point it should be empty.
+## Introduction
+[Libraries](https://github.com/webgme/webgme/wiki/GME-Libraries) are essential elements of language composing. We can use existing projects as libraries during our work and they will add not just the language definitions, but also all the other components to our project.
 
-## Installing dependencies and staring the app
-To install the node dependencies use the command
-```
-npm install
-```
+## Target
+The sessions target is to compose the already created components with another language (our example uses the Signal Flow System) and create a plugin that can facilitate the code generator plugin without changing it.
 
-this will install the npm dependencies including webgme (in later versions of npm an explicit `npm install webgme` is needed as it is a [peer-dependency](https://nodejs.org/en/blog/npm/peer-dependencies/)).
+#### Detailed steps
 
-To start the app run
-```
-npm start
-```
+1. Create the new plugin `SignalMachine`.
+1. Create SignalMachine project starting from SignalFlowSystem seed.
+1. Add FSM as library ('from the URL of the FSM project').
+1. Extend the rules of `Primitive` to allow containment of `StateMachine`.
+1. Go into FM Receiver example and copy the `DeploymenProcess` into some of the `Primitive`s.
+1. Code the `SignalMachineExplorer` plugin
+   1. require `FSMCodeGenerator`
+   1. show how to call plugin from plugin
+   1. write the simple traversing code
+1. execute the finished plugin and show that it generated every code
+1. show that visualizar and decorator still works
+1. register the final project as seed
 
-A short-cut provided by the webgme-cli for these commands is `webgme start`.
 
-## Open the app in a browser
-In a browser (Chrome, Safari or (Firefox)) visit `127.0.0.1:8888` and the app should bring up the create project dialog.

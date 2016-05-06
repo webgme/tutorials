@@ -1,8 +1,10 @@
 {
   "components": {
-    "addons": {},
-    "decorators": {},
-    "layouts": {},
+    "decorators": {
+      "FSMDecorator": {
+        "src": "src/decorators/FSMDecorator"
+      }
+    },
     "plugins": {
       "FSMCodeGenerator": {
         "src": "src/plugins/FSMCodeGenerator",
@@ -18,7 +20,15 @@
         "src": "src/seeds/FSM"
       }
     },
-    "visualizers": {}
+    "visualizers": {
+      "FSMSimulator": {
+        "src": "panels/FSMSimulator/FSMSimulatorPanel",
+        "title": "FSMSimulator",
+        "panel": "src/visualizers/panels/FSMSimulator",
+        "secondary": false,
+        "widget": "src/visualizers/widgets/FSMSimulator"
+      }
+    }
   },
   "dependencies": {
     "addons": {},

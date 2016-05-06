@@ -10,15 +10,20 @@ var config = require('webgme/config/config.default'),
 // The paths can be loaded from the webgme-setup.json
 config.plugin.basePaths.push('src/plugins');
 config.seedProjects.basePaths.push('src/seeds/FSM');
+config.visualization.decoratorPaths.push('src/decorators');
 
 
 
+config.visualization.panelPaths.push('src/visualizers/panels');
 
 
 // Visualizer descriptors
-
+config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');
 // Add requirejs paths
-
+config.requirejsPaths = {
+    'panels': './src/visualizers/panels',
+    'widgets': './src/visualizers/widgets'
+};
 
 
 config.mongo.uri = 'mongodb://127.0.0.1:27017/fsm';
