@@ -27,6 +27,8 @@ A short-cut provided by the webgme-cli for these commands is `webgme start`.
 ## Open the app in a browser
 In a browser (Chrome, Safari or (Firefox)) visit `127.0.0.1:8888` and the app should bring up the create project dialog.
 
+Create a new project and name it `FSM`. Start from a Seed and selected the `EmptyProject` file-seed.
+
 ## Build FSM language with Example then create seed
 Building the model by using the UI. To add our model to the project as seed so it can be the initial blueprint for our new project, we use the following command:
 ```
