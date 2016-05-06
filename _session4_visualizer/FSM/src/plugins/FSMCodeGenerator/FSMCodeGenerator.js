@@ -102,7 +102,7 @@ define([
                 programJS = ejs.render(programJsTemplate, self.dataModel).replace(new RegExp('&quot;', 'g'), '"');
                 self.logger.info('program.js', programJS);
 
-                return artifact.addFiles({
+                return artifact.addFilesAsSoftLinks({
                     'program.js': programJS,
                     'index.html': indexHtmlContent
                 });
