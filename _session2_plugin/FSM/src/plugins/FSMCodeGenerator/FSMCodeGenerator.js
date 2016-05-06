@@ -99,11 +99,10 @@ define([
                 // Create a complex artifact, with links to multiple files.
                 artifact = self.blobClient.createArtifact('simulator');
 
-                programJS = ejs.render(programJsTemplate, self.dataModel);
-
+                programJS = ejs.render(programJsTemplate, self.dataModel).replace(new RegExp('&quot;', 'g'), '"');
                 self.logger.info('program.js', programJS);
 
-                return artifact.addFiles({
+                return artifact.addFilesAsSoftLinks({
                     'program.js': programJS,
                     'index.html': indexHtmlContent
                 });

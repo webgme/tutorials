@@ -39,7 +39,7 @@ define([
         this.$runPluginBtn = $('<button/>', {
             type: 'button',
             class: 'btn btn-primary',
-            text: 'Generate Code'
+            text: 'Run Plugin'
         });
     };
 
@@ -94,10 +94,10 @@ define([
                 } else {
                     self.logger.debug('commitObj', commitObj);
                     if (commitObj.parents.indexOf(originHash) > -1) {
-                        self.$resultIndicator.text('Fresh simulator code');
+                        self.$resultIndicator.text('Has new code');
                         self.$resultIndicator.css('color', 'green');
                     } else {
-                        self.$resultIndicator.text('Code might be outdated');
+                        self.$resultIndicator.text('Has older code');
                         self.$resultIndicator.css('color', 'orange');
                     }
                 }
@@ -108,9 +108,10 @@ define([
             this.$runPluginBtn.on('click', function () {
                 self.logger.debug('Clicked node', nodeObj.getAttribute('name'));
                 // See client API webgme/src/client/pluginmanager.js
-                var pluginContext = client.getCurrentPluginContext();
-
                 // By default the activeNode is the "opened" node, in our case we want the node with the btn defined.
+                var pluginContext = client.getCurrentPluginContext('FSMCodeGenerator', nodeObj.getId());
+
+                // Remove this line when 2.0.0 is ready.
                 pluginContext.managerConfig.activeNode = nodeObj.getId();
 
                 client.runBrowserPlugin('FSMCodeGenerator', pluginContext, function (err, pluginResult) {

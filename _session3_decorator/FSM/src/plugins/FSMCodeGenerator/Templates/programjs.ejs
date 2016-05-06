@@ -15,73 +15,65 @@ for (i = 0; i < stateMachine.states.length; i += 1) {
 var FSM = {};
 
 /**
- *
- * @param {function(function)} inputFn - Should invoke the callback with event data, e.g. "readline".
  * @param {function(string)} log - Out put goes here, e.g. console.log.
- * @param {function} exit - called when machine terminates, e.g. process.exit.
  */
-FSM.machine = function finiteStateMachine(inputFn, log, exit) {
+FSM.Simulator = function (log) {
     'use strict';
     var finalStates = [],
-        currentState = '<%=initialStateName%>',
-        currentStateId = '<%=stateMachine.initialState%>';
+        self = this;
+
+    this.currentState = '<%=initialStateName%>';
+    this.currentStateId = '<%=stateMachine.initialState%>';
+    this.possibleEvents = [];
+    this.atEnd = false;
 
 <%for (i = 0; i < stateMachine.finalStates.length; i += 1) {%>    finalStates.push('<%=stateMachine.finalStates[i]%>');
 <%}%>
+    this.initialize = function () {
+        self.currentState = '<%=initialStateName%>';
+        self.currentStateId = '<%=stateMachine.initialState%>';
+        self.possibleEvents = [];
+        self.atEnd = false;
+        self.enterEvent();
+    };
 
-    log('Current state: ' + currentState + '(' + currentStateId + ')');
-    log('Enter an event: ');
-
-    inputFn(function (currentInput) {
+    this.enterEvent = function (currentInput) {
 <%for (i = 0; i < stateMachine.states.length; i += 1) {
     var eventStr = '';
     if (stateMachine.states[i].transitions.length === 0) {
         continue;
     }
-    innerIf = '            if';%><%=outerIf%> (currentStateId === "<%=stateMachine.states[i].id%>") {
+    innerIf = '            if';%><%=outerIf%> (self.currentStateId === "<%=stateMachine.states[i].id%>") {
 <%for (j = 0; j < stateMachine.states[i].transitions.length; j += 1) {
     var transition = stateMachine.states[i].transitions[j];
-    eventStr += ', ' + transition.event;
+    eventStr += ', "' + transition.event + '"';
 %><%=innerIf%> (currentInput === '<%=transition.event%>') {
-                log('Switching state to State1 (1)');
-                currentStateId = '<%=transition.targetId%>';
-                currentState = '<%=transition.targetName%>';
+                log('Switching state to <%=transition.targetName%> (<%=transition.targetId%>)');
+                self.currentStateId = '<%=transition.targetId%>';
+                self.currentState = '<%=transition.targetName%>';
+                self.enterEvent();
             }<%if (j === stateMachine.states[i].transitions.length - 1) {%> else {
+                self.possibleEvents = [<%=eventStr.substring(2)%>];
                 log('Possible events for transition(s): <%=eventStr.substring(2)%>');
             }<%}innerIf = ' else if';}%>
         }<%outerIf = ' else if';}%>
 
         if (currentInput === 'exit') {
-            exit();
-        } else if (finalStates.indexOf(currentStateId) !== -1) {
-            log('At a final state ' + currentState + '(' + currentStateId + ')');
-            exit();
-        } else {
-            log('Current state: ' + currentState + '(' + currentStateId + ')');
-            log('Enter an event: ');
-        }
-    });
-}
-
-FSM.Helpers = function () {
-    'use strict';
-    var self = this,
-        currentInput = '',
-        breakLoop = false;
-
-    this.log = function (str) {
-        currentInput += str + '\n';
-    };
-
-    this.inputFn = function (callback) {
-        var newInput = window.prompt(currentInput);
-        callback(newInput);
-        if (breakLoop === false) {
-            self.inputFn(callback);
+            self.atEnd = true;
+        } else if (finalStates.indexOf(self.currentStateId) !== -1) {
+            log('At a final state ' + self.currentState + '(' + self.currentStateId + ')');
+            self.atEnd = true;
         }
     };
 
-    this.exit = function () {
-        breakLoop = true;
-    }
+    this.getPossibleEvents = function () {
+        return self.possibleEvents;
+    };
+
+    this.getCurrentState = function () {
+        return {
+            id: self.currentStateId,
+            name: self.currentState
+        };
+    };
 };
