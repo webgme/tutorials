@@ -1,0 +1,41 @@
+{
+  "components": {
+    "decorators": {
+      "FSMDecorator": {
+        "src": "src/decorators/FSMDecorator"
+      }
+    },
+    "plugins": {
+      "FSMCodeGenerator": {
+        "src": "src/plugins/FSMCodeGenerator",
+        "test": "test/plugins/FSMCodeGenerator"
+      },
+      "SignalMachineExplorer": {
+        "src": "src/plugins/SignalMachineExplorer",
+        "test": "test/plugins/SignalMachineExplorer"
+      }
+    },
+    "seeds": {
+      "FSM": {
+        "src": "src/seeds/FSM"
+      }
+    },
+    "visualizers": {
+      "FSMSimulator": {
+        "src": "panels/FSMSimulator/FSMSimulatorPanel",
+        "title": "FSMSimulator",
+        "panel": "src/visualizers/panels/FSMSimulator",
+        "secondary": false,
+        "widget": "src/visualizers/widgets/FSMSimulator"
+      }
+    }
+  },
+  "dependencies": {
+    "addons": {},
+    "decorators": {},
+    "layouts": {},
+    "plugins": {},
+    "seeds": {},
+    "visualizers": {}
+  }
+}
