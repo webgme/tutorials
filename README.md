@@ -20,4 +20,9 @@ The debug tools used during the tutorials:
 - [nodemon](https://github.com/remy/nodemon) `npm install -g nodemon`
 - [livereload](https://www.npmjs.com/package/livereload) `npm install -g livereload`
 
-During live tutorial we will use the IDE [webstorm](https://www.jetbrains.com/webstorm/download/#section=windows-version) (30 days trial version is available), an open source alternative is [atom](https://atom.io/).
+During the live tutorial we will use the IDE [webstorm](https://www.jetbrains.com/webstorm/download/#section=windows-version) (30 days trial version is available), an open source alternative is [atom](https://atom.io/).
+
+## Repository Structure
+The repository is broken down into different sessions. Each session contains a `README.md` with an outline of what the session will cover. The folders `_session*/FSM` contain the files in the repository after the session has been completed.
+
+When following the tutorial, it is recommended to start from the root of the repository, i.e. where this file resides, and work from the generated `FSM` folder.
