@@ -73,7 +73,7 @@ being closed (or navigated to a new node), but also when the node is deleted fro
 - `update` - Is triggered when there are changes in the model (these may or may not include changes for that
 particular node).
 
-## Checking the simulator origin
+#### Checking the Attached simulator
 Since we are interested in the attributes of a node both after it's been added and when there is an update, we
 will make a helper method, `_checkForResult`, that we call from both `on_addTo` and `update`.
 
@@ -85,7 +85,15 @@ if the attached code is up-to-date, we load the `client.ActiveCommitHash()`'s co
 the `simulatorOrigin` is the parent of the current commit we know that the code is up-to-date.
 
 
-## Creating plugin button
+#### Creating plugin button
+When there is no code attached to a node, we will create a button that will invoke the plugin on that node. Similarly to the `$resultIndicator` we create
+a `<button>`-element that we append to the main element when being added to the DOM. Since webgme uses [bootstrap](http://bootstrapdocs.com/v3.3.6/docs/javascript/#buttons),
+it allows use to add css-classes to an element and bootstrap will render the style of element in a nice way (for this button we add the classes `btn btn-primary`).
+
+By default the button should be hidden, so at `_checkForResult` we set the display style to `none`. If there is no results we set it back to `inline-block`.
+
+When the button is displayed we attach a `'click'`-event to it from where we get the context of the plugin and invokes in the browser. At destroy we clean-up the
+`'click'`-event handler, by calling `$runPluginBtn.off('click')`.
 
 
 

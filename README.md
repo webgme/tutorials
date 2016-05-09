@@ -40,5 +40,5 @@ The goal of this tutorial is to become familiar with using the webme-cli tool fo
 - In the third tutorial a visualizer for the nodes on the canvas (decorator) will be written. It will inherit from the default ModelDecorator but also display if a
 node has results and if it is up-to-date or not. It will also provide a button for invoking the plugin from session2.
 
-
+- In the forth
 
