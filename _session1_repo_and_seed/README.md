@@ -10,7 +10,7 @@ and `webgme-setup.json`. The latter contains metadata about the webgme component
 defines or imports from another webgme domain repo and is used and maintained by [webgme-cli](https://github.com/webgme/webgme-cli). At this point it should be empty.
 
 ## Installing dependencies and staring the app
-To install the node dependencies use the command
+To install the node dependencies, first we need to enter the project directory (`FSM`), then use the command
 ```
 npm install
 ```

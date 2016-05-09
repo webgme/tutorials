@@ -14,7 +14,7 @@
   },
   "version": "1.0.0",
   "peerDependencies": {
-    "webgme": "^1.7.2"
+    "webgme": "^2.0.0"
   },
   "devDependencies": {
     "mocha": "^2.2.5",
