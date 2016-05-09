@@ -1,4 +1,4 @@
-# tutorials
+# Tutorials
 Stepwise tutorials for building webgme components.
 
 ## Dependencies
@@ -19,3 +19,5 @@ After installation check the version by entering `webgme --version`
 The debug tools used during the tutorials:
 - [nodemon](https://github.com/remy/nodemon) `npm install -g nodemon`
 - [livereload](https://www.npmjs.com/package/livereload) `npm install -g livereload`
+
+During live tutorial we will use the IDE [webstorm](https://www.jetbrains.com/webstorm/download/#section=windows-version). An other alternative is [atom](https://atom.io/).
