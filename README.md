@@ -14,3 +14,8 @@ To host a webgme server:
 npm install -g webgme-cli
 ```
 After installation check the version by entering `webgme --version`
+
+
+The debug tools used during the tutorials:
+- [nodemon](https://github.com/remy/nodemon) `npm install -g nodemon`
+- [livereload](https://www.npmjs.com/package/livereload) `npm install -g livereload`
