@@ -10,12 +10,14 @@ define([
     'text!./metadata.json',
     'plugin/PluginBase',
     'q',
-    'plugin/FSMCodeGenerator/FSMCodeGenerator/FSMCodeGenerator'
+    'plugin/FSMCodeGenerator/FSMCodeGenerator/FSMCodeGenerator',
+    'js/RegistryKeys'
 ], function (PluginConfig,
              pluginMetadata,
              PluginBase,
              Q,
-             CodeGenerator) {
+             CodeGenerator,
+             REG_KEYS) {
     'use strict';
 
     pluginMetadata = JSON.parse(pluginMetadata);
@@ -47,6 +49,20 @@ define([
         return namespacedMeta;
     }
 
+    function isPluginValidForNode(core, node, pluginName) {
+        var validPlugins = core.getRegistry(node, REG_KEYS.VALID_PLUGINS);
+
+        if (validPlugins && validPlugins.split(' ').indexOf(pluginName) !== -1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function getNamespaceOfMetaType(core, node) {
+        return core.getNamespace(core.getMetaType(node));
+    }
+
     /**
      * Metadata associated with the plugin. Contains id, name, version, description, icon, configStructue etc.
      * This is also available at the instance at this.pluginMetadata.
@@ -70,34 +86,16 @@ define([
     SignalMachineExplorer.prototype.main = function (callback) {
         // Use self to access core, project, result, logger etc from PluginBase.
         // These are all instantiated at this point.
-        var self = this,
-            nodeObject,
-            codeGenerator = new CodeGenerator();
+        var self = this;
 
-        codeGenerator.initialize(self.logger.fork('FSMCodeGenerator'), self.blobClient, self.gmeConfig);
-        codeGenerator.configure(self); // this way we copy over the whole config
-
-        //overriding some variables and methods
-        codeGenerator.save = function (msg, cb) {
-            console.log('internal plugins should not save on their own :D ');
-            cb(null, this.result);
-        };
-        codeGenerator.META = getNamespaceMeta(self.core, self.META, 'FSM');
-
-        nodeObject = self.activeNode;
-
-        self.core.loadSubTree(nodeObject)
+        self.core.loadSubTree(self.activeNode)
             .then(function (nodes) {
                 var promises = [],
                     i,
                     metaTypeNode;
 
                 for (i = 0; i < nodes.length; i += 1) {
-                    metaTypeNode = self.core.getMetaType(nodes[i]);
-                    // console.log(self.core.getFullyQualifiedName(self.core.getMetaType(nodes[i])));
-                    // console.log(self.core.getNamespace(self.core.getMetaType(nodes[i])));
-                    if (self.core.getNamespace(metaTypeNode) === 'FSM' &&
-                        self.core.getAttribute(metaTypeNode, 'name') === 'StateMachine') {
+                    if (isPluginValidForNode(self.core, nodes[i], 'FSMCodeGenerator')) {
                         promises.push(self.generateCodeForNode(nodes[i]));
                     }
                 }
@@ -144,7 +142,7 @@ define([
                 cb(null, this.result);
             }
         };
-        codeGenerator.META = getNamespaceMeta(self.core, self.META, 'FSM');
+        codeGenerator.META = getNamespaceMeta(self.core, self.META, getNamespaceOfMetaType(self.core, node));
         codeGenerator.activeNode = node;
 
         codeGenerator.main(function (err, result) {

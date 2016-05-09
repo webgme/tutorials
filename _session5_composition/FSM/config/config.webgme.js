@@ -9,8 +9,9 @@ var config = require('webgme/config/config.default'),
 
 // The paths can be loaded from the webgme-setup.json
 config.plugin.basePaths.push('src/plugins');
-config.seedProjects.basePaths.push('src/seeds/FSM');
 config.visualization.decoratorPaths.push('src/decorators');
+config.seedProjects.basePaths.push('src/seeds/FSM');
+config.seedProjects.basePaths.push('src/seeds/SignalMachine');
 
 
 
@@ -21,8 +22,8 @@ config.visualization.panelPaths.push('src/visualizers/panels');
 config.visualization.visualizerDescriptors.push('./src/visualizers/Visualizers.json');
 // Add requirejs paths
 config.requirejsPaths = {
-    'panels': './src/visualizers/panels',
-    'widgets': './src/visualizers/widgets'
+  'panels': './src/visualizers/panels',
+  'widgets': './src/visualizers/widgets'
 };
 
 

@@ -18,6 +18,9 @@
     "seeds": {
       "FSM": {
         "src": "src/seeds/FSM"
+      },
+      "SignalMachine": {
+        "src": "src/seeds/SignalMachine"
       }
     },
     "visualizers": {
@@ -28,7 +31,9 @@
         "secondary": false,
         "widget": "src/visualizers/widgets/FSMSimulator"
       }
-    }
+    },
+    "addons": {},
+    "layouts": {}
   },
   "dependencies": {
     "addons": {},
