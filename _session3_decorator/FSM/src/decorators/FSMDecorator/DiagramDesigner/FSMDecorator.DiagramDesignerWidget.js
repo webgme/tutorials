@@ -84,16 +84,16 @@ define([
             originHash = nodeObj.getAttribute('simulatorOrigin'),
             project = client.getProjectObject();
 
+        this.$runPluginBtn.off('click');
+        this.$runPluginBtn.css('display', 'none');
         if (assetHash) {
             this.$resultIndicator.text('Code is attached!');
-            this.$runPluginBtn.css('display', 'none');
-            this.$runPluginBtn.off('click');
             project.loadObject(client.getActiveCommitHash(), function (err, commitObj) {
                 if (err) {
                     self.logger.error(err);
                 } else {
                     self.logger.debug('commitObj', commitObj);
-                    if (commitObj.parents.indexOf(originHash) > -1) {
+                    if (commitObj.parents && commitObj.parents.indexOf(originHash) > -1) {
                         self.$resultIndicator.text('Has new code');
                         self.$resultIndicator.css('color', 'green');
                     } else {
@@ -111,15 +111,12 @@ define([
                 // By default the activeNode is the "opened" node, in our case we want the node with the btn defined.
                 var pluginContext = client.getCurrentPluginContext('FSMCodeGenerator', nodeObj.getId());
 
-                // Remove this line when 2.0.0 is ready.
-                pluginContext.managerConfig.activeNode = nodeObj.getId();
-
                 client.runBrowserPlugin('FSMCodeGenerator', pluginContext, function (err, pluginResult) {
                     if (err) {
                         self.logger.error(err);
                     }
 
-                    self.logger.info('Plugin finished, awaiting update..');
+                    self.logger.info('Plugin finished', pluginResult);
                 });
             });
         }
