@@ -10,6 +10,11 @@
       "FSMDecorator": {
         "src": "src/decorators/FSMDecorator"
       }
+    },
+    "seeds": {
+      "FSM": {
+        "src": "src/seeds/FSM"
+      }
     }
   },
   "dependencies": {
