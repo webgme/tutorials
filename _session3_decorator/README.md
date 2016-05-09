@@ -4,14 +4,14 @@ These components are called [decorators](https://github.com/webgme/webgme/wiki/G
 
 ## Target
 Create a decorator that behaves like the ModelDecorator but with the following additions if the node is a **StateMachine**:
- - Checks if the **StateMachine** has any saved data from a plugin execution.
+ - Checks if the **StateMachine** has any saved data from a plugin execution at the attribute (`simulator`).
  - If it does NOT have any saved data, a button for invoking the `FSMCodeGenerator` will be enabled.
- - If it has stored data it will color code the box depending on if the stored metadata (commit-hash) matches the current context.
+ - If it has stored data display a message to the user depending on if the stored metadata (commit-hash) matches the current context.
 
 ## Create decorator inheriting from ModelDecorator
 Using [webgme-cli](https://github.com/webgme/webgme-cli) we can create a decorator that inherits from the ModelDecorator.
  ```
- webgme new decorator FSMDecorator --inherit // TODO: The inherit param does not work!
+ webgme new decorator FSMDecorator --inherit
  ```
 This creates a new decorator at '/src/decorators'. The new decorators is associated with three files.
 - `FSMDecorator.js` - Defines the decorator as a javascript class-like object exposed as an requirejs AMD module. Also defines the supported Widgets.
