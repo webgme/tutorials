@@ -26,3 +26,12 @@ During the live tutorial we will use the IDE [webstorm](https://www.jetbrains.co
 The repository is broken down into different sessions. Each session contains a `README.md` with an outline of what the session will cover. The folders `_session*/FSM` contain the files in the repository after the session has been completed.
 
 When following the tutorial, it is recommended to start from the root of the repository, i.e. where this file resides, and work from the generated `FSM` folder.
+
+## Goals
+The goal of this tutorial is to become familar with using the webme-cli tool for creating components and more importantly how to implement these. 
+
+The first tutorial covers how to initialize a repository and get the server running. During the live session a small meta-model for finite-state machines will be built up. The meta-model, together with an example, will then be stored as a seed (a template model for users to seed/start out from).
+
+In the second tutorial a model transformator, a plugin, will be written. It will use the model api (core-API) together with the defined meta model to gather the needed data to create a simulator class in javascript. This simulator will be saved back to the model and used in later sessions.
+
+In the third tutorial...
