@@ -73,6 +73,19 @@ being closed (or navigated to a new node), but also when the node is deleted fro
 - `update` - Is triggered when there are changes in the model (these may or may not include changes for that
 particular node).
 
+## Checking the simulator origin
 Since we are interested in the attributes of a node both after it's been added and when there is an update, we
-will make a helper method, `_checkResult`, that we call from both `on_addTo` and `update`.
+will make a helper method, `_checkForResult`, that we call from both `on_addTo` and `update`.
+
+After the element has been added we will add an indicator. Therefore we create a `<span>`-element, `this.$resultIndicator`
+and append it to the `this.$el` when the decorator element is being added to the DOM (`on_addTo`).
+
+Inside `_checkForResult` we use the client API (including the node api) to get the attributes of interest. To check
+if the attached code is up-to-date, we load the `client.ActiveCommitHash()`'s commit-object using the project-API. If
+the `simulatorOrigin` is the parent of the current commit we know that the code is up-to-date.
+
+
+## Creating plugin button
+
+
 
