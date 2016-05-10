@@ -22,3 +22,43 @@ This will create a new plugin in the src directory, two files are generated:
 Additionally the setup for writing [mocha] tests were generated in the test directory.
 The new plugin was made available (as a requirejs module) to the webgme app by adding a path to the `plugin.basePaths` in [config.plugin](https://github.com/webgme/webgme/tree/master/config#plugin).
 Lastly the `webgme-setup.json` populated with info that this plugin is defined in this particular repository, this will expose it to other users of [webgme-cli](https://github.com/webgme/webgme-cli).
+
+
+
+## Steps
+
+Restart WebGME server after the plugin is generated.
+
+Register plugin: expand language folder in the tree browser, double click on StateMachine, select the 'Meta' tab in the property editor, select FSMCodeGenerator for valid plugins.
+
+Open the Examples/Deployment process object and click on the play button on the toolbar, then select the FSMCodeGenerator.
+
+Look at the results.
+
+Open the web browser's inspector and show how to debug the plugin.
+
+Add `debugger;` statement to the source code. Then, remove it.
+
+Executing plugins from the command line.
+
+```
+npm run
+
+npm run plugin
+
+node ./node_modules/webgme/src/bin/run_plugin.js
+
+node ./node_modules/webgme/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
+```   
+
+Automated execution by using nodemon.
+
+```
+npm install -g nodemon
+
+nodemon ./node_modules/webgme/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
+
+nodemon --ext ejs,js ./node_modules/webgme/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
+```
+
+Change source code and save.
