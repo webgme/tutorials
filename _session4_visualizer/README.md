@@ -68,6 +68,7 @@ and a specific depth of how many level of children is of interest.
 Whenever there are changes within the user's territory the client will invoke the event handler
 with data about those changes. This registration of territory is done inside `selectObjectChanged` (should've been `activeObjectChanged`) in `FSMSimulatorControl.js`.
 After the territory has been defined, we request the client to load those nodes (potentially from the server) in `client.updateTerritory`.
+(This call is were the actual registration of the territory takes place.)
 
 For the purpose of this tutorial, we are mainly interested in when the **StateMachine** node and its children all have been loaded. Therefore we will only define one territory
 and build up the entire data for the widget when it has loaded. For other events we will simply notify the widget that the model might be outdated.
@@ -77,14 +78,15 @@ widget once.
 
 There are three types of events for nodes within a territory:
 
-- `load` - The node was either loaded from the server at an `updateTerritory` or newly created.
-- `update` - The (resolved i.e. including bases ) node potentially has changes.
+- `load` - The node was either loaded (potentially from the server) at an `updateTerritory` or newly created.
+- `update` - The (resolved i.e. including bases) node potentially has changes.
 - `unload` - The node was deleted from the territory.
 
 When we encounter the **StateMachine** node, we'd like to get a url for the html file in generated simulator which will make it possible for the
 widget to embed the generated code as an `iframe`. We know that the html file is named `index.html` and the blobClient provides a
-utility method for getting a url to retrieve content, `blobClient.getViewURL(hash, subpath)`.
+utility method for getting a url to retrieve content from the blob storage, `blobClient.getViewURL(hash, subpath)`.
 
+To access attributes and other node properties we use the GME Client node-getters (and can use utility methods for the client).
 At the point where we have all the data we will call the (not yet existing) method `populateGraph` on the widget.
 
 ### Visualizing the data in the widget
@@ -92,5 +94,18 @@ First we will modify the template by keeping a reference to the header element. 
 changes detected in the underlying gme model. At start it won't have any text defined, this we will add if we get any events after the initial load.
 
 When we get the state machine data and know we will be updated if there are changes, we proceed with building up the graph.
-The first thing we add is a d3 svg container at initialize.
+The first thing we add is a d3 svg container at initialize and make sure to set the `width` and `height` correctly (and maintain it
+on resize).
+
+In `populateGraph` we build up two maps `_idToState` and `_idToTransition` and populate them based on the data from the controller.
+With the mappings we then add the nodes and transitions as svg elements to our d3 svg container.
+
+The final step is to embed the generated simulator stored on the blob. For this we define two properties `_simEl` and `_simulator`. The former
+will be a reference to the embedded iframe and the latter the instantiate `FSM.Simulator` "class" from the global scope of the iframe.
+
+Once the iframe has loaded and since the `program.js` is defined in the `<header>`, we have access to the `FSM.Simulator`. Since it's an iframe
+we can access it using the `contentWindow` of the html element.
+
+At his stage we have access to everything we need and the details of creating an input field with action buttons and hooking them up
+with the `_simulator` can be seen in the code. It also displays how we can use d3 to transition neatly between states.
 
