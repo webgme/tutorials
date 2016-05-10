@@ -3,16 +3,16 @@
 main canvas. Whereas decorators are part of the context or territory of another widget, visualizers control the territories, i.e., which 
 nodes are of interest. To handle this it relies on the [Client API](https://github.com/webgme/webgme/wiki/GME-Client-API#loadingwatching-ie-listening-on-changes-nodes).
 Although free to register for changes in an arbitrary territory, the widget is typically bound to the active object (`client.getActiveObject()`) and
-sometimes the selection (`client.getActiveSelection()`). For instance in the ModelEditor, the active object is the node that defines the canvas and the highlight children is the
+sometimes the selection (`client.getActiveSelection()`). For instance in the ModelEditor, the active object is the node that defines the canvas and the highlighted children is the
 active selection.
 
 ## Target
 Create a visualizer that uses the generated code from the FSMCodeGenerator to make a simple interactive finite-state-machine simulator.
-Using the actual model it should get all the **States** and **Transition**s and build a graph of the model using [d3](https://d3js.org/).
+Using the actual model it should get all the **State**s and **Transition**s and build a graph of the model using a [d3](https://d3js.org/) svg container..
 The visualizer should only be used from **StateMachine**s and when activated it will embed the generated simulator code as an
 [iframe](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe) HTML-element.
 
-An input field with the event will be available in the canvas and users should be able to submit an event and the current state will be
+An input field for entering the `event`s of the **Transition**s will be available in the canvas and users should be able to submit an event and the current state will be
 shown by coloring the nodes.
 
 #### Detailed steps
@@ -21,7 +21,7 @@ shown by coloring the nodes.
 2. Build the d3 graph based on the given model.
 3. Add input field with submit and make mock function to present result to user.
 4. Read the `simulator` attribute of the **StateMachine** and embed the blob-url in an `iframe`.
-5. Access the "globally" defined class from the `iframe`.
+5. Access the "globally" defined `FSM.Simulator` class from the `iframe`.
 6. Add input field and hook up events from user to the simulator.
 
 ## Generate template code for a visualizer
@@ -39,7 +39,7 @@ made available in `visualizerDescriptors` in [config.visualization](https://gith
 Again, the `webgme-setup.json` is populated with info that this visualizer is defined in this particular repository. This will expose it to other users of [webgme-cli](https://github.com/webgme/webgme-cli).
 
 ## Register the visualizer
-Visualizers are registered to nodes and are stored under the registry `validVisualizers`. In the UI it is available under **META** in the Property Editor.
+Visualizers are registered at nodes and are stored under the registry `validVisualizers`. In the UI it is available under **META** in the Property Editor.
 Since we want the decorator to be used for **StateMachine**s only, open the **StateMachine** Meta-node and add `FSMSimulator` right after `ModelEditor` in the string `validVisualizers`
 (Again, since the registry follows inheritance all **StateMachine**s will now have the option `FSMSimulator`.)
 
@@ -52,7 +52,7 @@ All logger instances of webgme start with `'gme:'` so in the browser console we 
 To make sure that we only get the logs from our decorator we're better off using the following setting:
 
 ```javascript
-localStorage.debug = 'gme:Decorators:FSMDecorator'
+localStorage.debug = 'gme:FSMSimulator*'
 ```
 
 ## Modifying the visualizer
@@ -62,8 +62,10 @@ The controllers main duty is to extract data from the GME model and pass it to t
 define a territory within the project-tree from where we want the controller to be notified.
 
 
-Different UI components, like our visualizer, registers themselves as `users` at the GME client and passes an event handler. A user then defines territories, each starting from one node
-and a specific depth of how many level of children is of interest. Whenever there are changes within the user's territory the client will invoke the event handler
+Different UI components, like our visualizer, registers themselves as users at the GME client and passes an event handler, (`client.addUI`). A user then defines territories, each starting from one node
+and a specific depth of how many level of children is of interest.
+
+Whenever there are changes within the user's territory the client will invoke the event handler
 with data about those changes. This registration of territory is done inside `selectObjectChanged` (should've been `activeObjectChanged`) in `FSMSimulatorControl.js`.
 After the territory has been defined, we request the client to load those nodes (potentially from the server) in `client.updateTerritory`.
 
@@ -90,5 +92,5 @@ First we will modify the template by keeping a reference to the header element. 
 changes detected in the underlying gme model. At start it won't have any text defined, this we will add if we get any events after the initial load.
 
 When we get the state machine data and know we will be updated if there are changes, we proceed with building up the graph.
-The first thing we add is a d3 svg container at initialize. 
+The first thing we add is a d3 svg container at initialize.
 
