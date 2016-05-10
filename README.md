@@ -23,6 +23,8 @@ The debug tools used during the tutorials:
 - [nodemon](https://github.com/remy/nodemon) `npm install -g nodemon`
 - [livereload](https://www.npmjs.com/package/livereload) `npm install -g livereload`
 
+N.B. livereload requires python 2.7 to be installed and available in path.
+
 During the live tutorial we will use the IDE [webstorm](https://www.jetbrains.com/webstorm/download/#section=windows-version) (30 days trial version is available), an open source alternative is [atom](https://atom.io/).
 
 ## Repository Structure
