@@ -31,14 +31,10 @@
         "secondary": false,
         "widget": "src/visualizers/widgets/FSMSimulator"
       }
-    },
-    "addons": {},
-    "layouts": {}
+    }
   },
   "dependencies": {
-    "addons": {},
     "decorators": {},
-    "layouts": {},
     "plugins": {},
     "seeds": {},
     "visualizers": {}

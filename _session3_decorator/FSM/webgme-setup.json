@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "plugins": {},
-    "decorators": {}
+    "decorators": {},
+    "seeds": {}
   }
 }

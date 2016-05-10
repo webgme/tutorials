@@ -9,6 +9,11 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
     'use strict';
 
     var FSMSimulatorWidget,
+        STATE_TYPES = {
+            State: 'State',
+            Initial: 'Initial',
+            End: 'End'
+        },
         WIDGET_CLASS = 'f-s-m-simulator';
 
     FSMSimulatorWidget = function (logger, container) {
@@ -36,6 +41,13 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
         this._headerEl = $('<h3>');
         this._el.append(this._headerEl);
         this._headerEl.css('color', 'red');
+
+        // Registering to events can be done with jQuery (as normal)
+        //this._el.on('dblclick', function (event) {
+        //    event.stopPropagation();
+        //    event.preventDefault();
+        //    self.onBackgroundDblClick();
+        //});
 
         // Larger html snippets should ideally be defined in html-files and include using require-text (text!<path>).
         this._inputGroup = $(
@@ -146,7 +158,7 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
 
         for (key in fsmData.descriptors) {
             desc = fsmData.descriptors[key];
-            if (desc.metaType === 'State' || desc.metaType === 'Initial' || desc.metaType === 'End') {
+            if (STATE_TYPES.hasOwnProperty(desc.metaType)) {
                 this._idToState[key] = {
                     desc: desc,
                     d3Item: null,
@@ -174,20 +186,20 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
 
         for (key in this._idToState) {
             stateData = this._idToState[key];
-            this._idToState[key].d3Item = this._svgD3.append('circle')
+            stateData.d3Item = this._svgD3.append('circle')
                 .attr('cx', stateData.desc.position.x)
                 .attr('cy', stateData.desc.position.y)
                 .attr('r', 20)
                 .attr('fill', 'gray');
 
-            this._idToState[key].defaultColor = 'gray';
+            stateData.defaultColor = 'gray';
 
-            if (stateData.desc.metaType === 'Initial') {
-                this._idToState[key].d3Item.attr('fill', 'green');
-                this._idToState[key].defaultColor = 'green';
-            } else if (stateData.desc.metaType === 'End') {
-                this._idToState[key].d3Item.attr('fill', 'purple');
-                this._idToState[key].defaultColor = 'purple';
+            if (stateData.desc.metaType === STATE_TYPES.Initial) {
+                stateData.d3Item.attr('fill', 'green');
+                stateData.defaultColor = 'green';
+            } else if (stateData.desc.metaType === STATE_TYPES.End) {
+                stateData.d3Item.attr('fill', 'purple');
+                stateData.defaultColor = 'purple';
             }
 
             stateData.title = this._svgD3.append('text')
@@ -230,8 +242,13 @@ define(['jquery', 'd3', 'css!./styles/FSMSimulatorWidget.css'], function () {
                 return;
             }
 
-            this._simEl = $( '<iframe id="FSMSimulator" src="' + fsmData.simulatorUrl +
-                '" width="0" height="0"></iframe>' );
+            this._simEl = $('<iframe>', {
+                id: 'FSMSimulator',
+                src: fsmData.simulatorUrl,
+                width: 0,
+                height: 0
+            });
+
             this._el.append(this._simEl);
 
             this._simEl.on('load', function () {

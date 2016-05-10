@@ -5,9 +5,15 @@
         "src": "src/plugins/FSMCodeGenerator",
         "test": "test/plugins/FSMCodeGenerator"
       }
+    },
+    "seeds": {
+      "FSM": {
+        "src": "src/seeds/FSM"
+      }
     }
   },
   "dependencies": {
-    "plugins": {}
+    "plugins": {},
+    "seeds": {}
   }
 }
