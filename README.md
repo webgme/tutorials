@@ -10,7 +10,10 @@ To host a webgme server:
 - https://git-scm.com/downloads
 
 After mongodb has been installed, start mongod (mongo deamon) at the default port 27017 and leave it running throughout the
-tutorial.
+tutorial:
+```
+%Path\to\mongod.exe% --dbpath %Path\to\database\root\directory%
+```
 
 [https://github.com/webgme/webgme-cli](https://github.com/webgme/webgme-cli) (v2.0.0), the tool for creating new webgme components (plugins, decorators, visualizers), needs to be installed globally as a node-module. Use the following command:
 ```
