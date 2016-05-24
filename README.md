@@ -2,7 +2,7 @@
 Stepwise tutorials for building webgme components.
 
 ## Dependencies
-To follow the tutorial the following dependendencies need to be installed:
+To follow the tutorial the following dependencies need to be installed:
 
 To host a webgme server:
 - https://nodejs.org/en/ (LTS is preferred)
