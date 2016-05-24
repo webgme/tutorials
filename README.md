@@ -1,3 +1,4 @@
+< USE THESE BRACKETS FOR MARKDOWN COMMENTS>
 # Tutorials
 Stepwise tutorials for building webgme components.
 
@@ -36,14 +37,13 @@ The repository is broken down into different sessions. Each session contains a `
 When following the tutorial, it is recommended to start from the root of the repository, i.e. where this file resides, and work from the generated `FSM` folder.
 
 ## Goals
-The goal of this tutorial is to become familiar with using the webme-cli tool for creating components and more importantly how to implement these.
+The goal of these tutorials is to become familiar with using the webme-cli tool for creating components and more importantly how to implement these components.
 
-- The first tutorial covers how to initialize a repository and get the server running. During the live session a small meta-model for finite-state machines will be built up. The meta-model, together with an example, will then be stored as a seed (a template model for users to seed/start out from).
+- The first tutorial covers how to initialize a repository and get the server running. During the live session a small meta-model for finite-state machines will be built up. (See https://youtu.be/YKi_256Vy_0?list=PLhvSjgKmeyjhp4_hnf-xPdCgES56dnMJb&t=306). The meta-model, together with an example, will then be stored as a seed (a template model for users to seed/start out from).
 
-- In the second tutorial a model transformer, a plugin, will be written. It will use the model api (core-API) together with the defined meta model to gather the needed data to create a simulator class in javascript. This simulator will be saved back to the model and used in later sessions.
+- In the second tutorial, a model transformer - a WebGME plugin - will be written. It will use the model api (core-API) together with the FSM meta-model to gather the needed data to create a simulator class in javascript. This simulator will be saved back to the model and used in later sessions.
 
-- In the third tutorial a visualizer for the nodes on the canvas (decorator) will be written. It will inherit from the default ModelDecorator but also display if a
-node has results and if it is up-to-date or not. It will also provide a button for invoking the plugin from session2.
+- In the third tutorial a visualizer for the nodes on the canvas (decorator) will be written. Our decorator will inherit from the default ModelDecorator, and we will extend it to display a) the node's 'result' object, and b) if the result object is up-to-date. It will also provide a button for invoking the plugin from session2.
 
-- In the forth
+<- In the fourth>
 
