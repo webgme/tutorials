@@ -25,7 +25,7 @@ Lastly, the `webgme-setup.json` is populated with info indicating that this plug
 The procedure for writing a new plugin if documented in [tutorial session 2](https://www.youtube.com/watch?v=Ri4IC_u-TO4&list=PLhvSjgKmeyjhp4_hnf-xPdCgES56dnMJb&index=4)
 
 
-## Steps
+## [Tutorial Steps](https://www.youtube.com/watch?v=Ri4IC_u-TO4&list=PLhvSjgKmeyjhp4_hnf-xPdCgES56dnMJb&index=4)
 
 Restart WebGME server after the plugin is generated.
 
