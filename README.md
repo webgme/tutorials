@@ -1,4 +1,4 @@
-< USE THESE BRACKETS FOR MARKDOWN COMMENTS>
+<!--- USE THESE BRACKETS FOR MARKDOWN COMMENTS-->
 # Tutorials
 Source code for WebGME components; to be used in conjunction with [WebGME Seminar tutorials](https://www.youtube.com/watch?v=fbDgGCz3piQ&list=PLhvSjgKmeyjhp4_hnf-xPdCgES56dnMJb).
 
