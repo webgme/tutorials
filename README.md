@@ -38,7 +38,7 @@ When following the tutorial, it is recommended to start from the root of the rep
 ## Goals
 The goal of these tutorials is (1) to become familiar with using the webme-cli tool for creating components, and more importantly, (2) how to implement these components.
 
-- The [first tutorial](https://www.youtube.com/watch?v=YKi_256Vy_0&list=PLhvSjgKmeyjhp4_hnf-xPdCgES56dnMJb&index=3) covers how to initialize a repository and get the server running. During the live session a small meta-model for finite-state machines will be built up. (See https://youtu.be/YKi_256Vy_0?list=PLhvSjgKmeyjhp4_hnf-xPdCgES56dnMJb&t=306). The meta-model, together with an example, will then be stored as a seed (a template model for users to seed/start out from).
+- The [first tutorial](https://www.youtube.com/watch?v=YKi_256Vy_0&list=PLhvSjgKmeyjhp4_hnf-xPdCgES56dnMJb&index=3) covers how to initialize a repository and get the server running. During the live session a small meta-model for finite-state machines will be built up, as well as an example instance model.
 
 - In the [second tutorial](https://www.youtube.com/watch?v=Ri4IC_u-TO4&list=PLhvSjgKmeyjhp4_hnf-xPdCgES56dnMJb&index=4), a model transformer - a WebGME plugin - will be written. It will use the model api (core-API) together with the FSM meta-model to gather the needed data to create a simulator class in javascript. This simulator will be saved back to the model and used in later sessions.
 
