@@ -27,19 +27,19 @@ The procedure for writing a new plugin if documented in [tutorial session 2](htt
 
 ## [Tutorial Steps](https://www.youtube.com/watch?v=Ri4IC_u-TO4&list=PLhvSjgKmeyjhp4_hnf-xPdCgES56dnMJb&index=4)
 
-Restart WebGME server after the plugin is generated.
+- Restart WebGME server after the plugin is generated.
 
-Register plugin: expand language folder in the tree browser, double click on StateMachine, select the 'Meta' tab in the property editor, select FSMCodeGenerator for valid plugins.
+- Register plugin: expand language folder in the tree browser, double click on StateMachine, select the 'Meta' tab in the property editor, select FSMCodeGenerator for valid plugins.
 
-Open the Examples/Deployment process object and click on the play button on the toolbar, then select the FSMCodeGenerator.
+- Open the Examples/Deployment process object and click on the play button on the toolbar, then select the FSMCodeGenerator.
 
-Look at the results.
+- Look at the results.
 
-Open the web browser's inspector and show how to debug the plugin.
+- Open the web browser's inspector and show how to debug the plugin.
 
-Add `debugger;` statement to the source code. Then, remove it.
+- Add `debugger;` statement to the source code. Then, remove it.
 
-Executing plugins from the command line.
+- Executing plugins from the command line.
 
 ```
 npm run
@@ -51,7 +51,7 @@ node ./node_modules/webgme/src/bin/run_plugin.js
 node ./node_modules/webgme/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
 ```   
 
-Automated execution by using nodemon.
+- Automated execution by using nodemon.
 
 ```
 npm install -g nodemon
@@ -61,4 +61,4 @@ nodemon ./node_modules/webgme/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
 nodemon --ext ejs,js ./node_modules/webgme/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
 ```
 
-Change source code and save.
+- Change source code and save.
