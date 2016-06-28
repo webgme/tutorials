@@ -1,45 +1,45 @@
 ## Introduction
 Some panels (e.g. the DiagramDesignerWidget or the PartBrowser) support customization of their node decoration.
-These components are called [decorators](https://github.com/webgme/webgme/wiki/GME-Decorators).
+These components are called [decorators](https://github.com/webgme/webgme/wiki/GME-Decorators). The procedure for creating a decorator is documented in [WebGME Tutorial Session 3 - Decorator](https://www.youtube.com/watch?v=ol_Y7Zr5_Ao).
 
 ## Target
 Create a decorator that behaves like the ModelDecorator but with the following additions if the node is a **StateMachine**:
  - Checks if the **StateMachine** has any saved data from a plugin execution at the attribute (`simulator`).
- - If it has stored data display a message to the user depending on if the stored metadata (commit-hash) matches the current context.
+ - If the **StateMachine** has stored data, display a message to the user depending on if the stored metadata (commit-hash) matches the current context.
  - If it does NOT have any saved data, a button for invoking the `FSMCodeGenerator` will be enabled.
 
 ## Create decorator inheriting from ModelDecorator
-Using [webgme-cli](https://github.com/webgme/webgme-cli) we can create a decorator that inherits from the ModelDecorator.
+Using [webgme-cli](https://github.com/webgme/webgme-cli), we can create a decorator that inherits from the ModelDecorator.
  ```
  webgme new decorator FSMDecorator --inherit
  ```
-This creates a new decorator at '/src/decorators'. The new decorators is associated with three files.
-- `FSMDecorator.js` - Defines the decorator as a javascript class-like object exposed as an requirejs AMD module. Also defines the supported Widgets.
+This creates a new decorator at '/src/decorators'. The new decorators is associated with three files:
+- `FSMDecorator.js` - Defines the decorator as a javascript class-like object exposed as a 'requirejs' [AMD module](http://requirejs.org/docs/whyamd.html). Also defines the supported Widgets.
 - `/DiagramDesigner/FSMDecorator.DiagramDesignerWidget.js` - Defines the behavior of the decorator when used in e.g. the ModelEditor.
 - `/DiagramDesigner/FSMDecorator.PartBrowserWidget.js` - Defines the behavior of the decorator when used in the PartBrowser.
 
 The new decorator is made available for the decorator-manager (as a requirejs module) by adding its path to the `visualization.decoratorPaths` in [config.plugin](https://github.com/webgme/webgme/tree/master/config#visualization).
-Lastly the `webgme-setup.json` populated with info that this decorator is defined in this particular repository, this will expose it to other users of [webgme-cli](https://github.com/webgme/webgme-cli).
+Lastly, the `webgme-setup.json` is populated with info that this decorator is defined in this particular repository, which will expose it to other users of [webgme-cli](https://github.com/webgme/webgme-cli).
 
 ## Register the decorator
-Registering a decorator for a model requires two steps.
+Registering a decorator for a model requires two steps:
 #### Project registration
 To make the decorator available as a choice for the individual nodes we first need to register it for the entire project. 
-This is by adding it to the registry `validDecorators` of the root-node. In the UI it is available under **Meta** in the Property Editor. 
+This is done by adding it to the registry `validDecorators` of the root-node. In the UI it is available under the **Meta** tab in the Property Editor. 
 Enable the `FSMDecorator` by selecting the check-box.
 
 #### Node registration
-To set the decorator for a node we edit the registry `decorator`. In the UI it is available under **Preferences** in the Property Editor.
-Since we want the decorator to be used for **StateMachine**s only, open the **StateMachine** Meta-node and set the decorator to `FSMDecorator`.
-(Since the registry follows inheritance all **StateMachine**s will now use the new decorator.)
+To set the decorator for a node we edit the registry `decorator`. In the UI it is available under the **Preferences** tab in the Property Editor.
+Since we want the decorator to be used only for **StateMachine** nodes, open the **StateMachine** Meta-node and set the decorator to `FSMDecorator`.
+(Since the registry follows inheritance all **StateMachine** nodes will now use the new decorator.)
 
 ## Debugging the code
-When debugging browser code it is advised to load the page via `debug.html`. That way the non-minified version of the webgme code will be loaded (including the libraries).
-To open up the page in debug mode (running locally) go to `http://127.0.0.1:8888/debug.html`.
+When debugging browser code it is advised to load the page via `debug.html`. That way, the non-minified version of the webgme code will be loaded to the browser (including the libraries).
+To open the page in debug mode (running locally) go to `http://127.0.0.1:8888/debug.html` (`localhost:8888/debug.html`).
 
-To enable the logger (based on [debug](https://github.com/visionmedia/debug)) set the debug property of the localStorage to an inclusive regular expression. 
-All logger instances of webgme start with `'gme:'` so in the browser console we type `localStorage.debug = 'gme:*'`. For it to have affect we need to refresh the browser. 
-To make sure that we only get the logs from our decorator we're better off using the following setting:
+To enable the logger (based on [debug](https://github.com/visionmedia/debug)), set the debug property of the localStorage to an inclusive regular expression. 
+All logger instances of webgme start with `'gme:'` so in the browser console we type `localStorage.debug = 'gme:*'`. For the changed to take effect we need to refresh the browser. 
+To make sure that we only get the logs from our decorator we are better off using the following setting:
 
 ```javascript
 localStorage.debug = 'gme:Decorators:FSMDecorator'
@@ -51,7 +51,7 @@ can monitor files and automatically refresh a webpage when changes are detected.
 npm install -g livereload
 ```
 
-To register out webpage to the reload events generated by [livereload](https://www.npmjs.com/package/livereload), we need to add a tag in the html-file. Since we're using
+To register our webpage to the reload events generated by [livereload](https://www.npmjs.com/package/livereload), we need to add a tag in the html-file. Since we are using
 `debug.html` we can uncomment the script tag at `node_modules/webgme/src/client/debug.html`.
 
 To start livereload (configured to listen to changes in our src directory) use the following command:
@@ -74,7 +74,7 @@ being closed (or navigated to a new node), but also when the node is deleted fro
 particular node).
 
 #### Checking the Attached simulator
-Since we are interested in the attributes of a node both after it's been added and when there is an update, we
+Since we are interested in the attributes of a node both after it has been added and when there is an update, we
 will make a helper method, `_checkForResult`, that we call from both `on_addTo` and `update`.
 
 After the element has been added we will add an indicator. Therefore we create a `<span>`-element, `this.$resultIndicator`
@@ -88,9 +88,9 @@ the `simulatorOrigin` is the parent of the current commit we know that the code 
 #### Creating plugin button
 When there is no code attached to a node, we will create a button that will invoke the plugin on that node. Similarly to the `$resultIndicator` we create
 a `<button>`-element that we append to the main element when being added to the DOM. Since webgme uses [bootstrap](http://bootstrapdocs.com/v3.3.6/docs/javascript/#buttons),
-it allows use to add css-classes to an element and bootstrap will render the style of element in a nice way (for this button we add the classes `btn btn-primary`).
+it allows us to add css-classes to an element and bootstrap will render the style of element in a nice way (for this button we add  `btn btn-primary`).
 
-By default the button should be hidden, so at `_checkForResult` we set the display style to `none`. If there is no results we set it back to `inline-block`.
+By default the button should be hidden, so at `_checkForResult` we set the display style to `none`. If there is no result object found we set it back to `inline-block`.
 
 When the button is displayed we attach a `'click'`-event to it from where we get the context of the plugin and invokes in the browser. At destroy we clean-up the
 `'click'`-event handler, by calling `$runPluginBtn.off('click')`.
