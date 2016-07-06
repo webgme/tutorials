@@ -17,7 +17,7 @@ shown by coloring the nodes.
 
 #### Detailed steps
 
-The detailed walkthrough for this tutorial can be found at [WebGME Tutorial Session 4 - Visualizer](https://www.youtube.com/watch?v=pV4BIBrKrwo).
+The detailed walkthrough for this tutorial can be found at [WebGME Tutorial Session 4 - Visualizer](https://www.youtube.com/watch?v=3OeFfOrrST8&list=PLhvSjgKmeyjhp4_hnf-xPdCgES56dnMJb&index=6).
 
 1. Get the available **States** and **Transitions** in the model at start. Notify user about model changes.
 2. Build the d3 graph based on the given model.
