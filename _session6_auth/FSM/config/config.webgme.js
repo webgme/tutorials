@@ -12,6 +12,7 @@ config.plugin.basePaths.push('src/plugins');
 config.visualization.decoratorPaths.push('src/decorators');
 config.seedProjects.basePaths.push('src/seeds/FSM');
 config.seedProjects.basePaths.push('src/seeds/SignalMachine');
+config.seedProjects.basePaths.push('src/seeds/gmeAuth');
 
 
 

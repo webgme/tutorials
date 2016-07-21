@@ -21,6 +21,9 @@
       },
       "SignalMachine": {
         "src": "src/seeds/SignalMachine"
+      },
+      "gmeAuth": {
+        "src": "src/seeds/gmeAuth"
       }
     },
     "visualizers": {
