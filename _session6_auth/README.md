@@ -14,7 +14,7 @@ to scope the rights to different projects. In addition different extensions can 
 
 
 ## Target
-The target of this tutorial is to turn on authentication and generate appropriate keys for the token generation.
+The target of this tutorial is to turn on authentication and generate appropriate keys for the token generation. An get an idea of how the authorization model works.
 
 #### Detailed steps
 
@@ -36,6 +36,7 @@ openssl rsa -in token_keys/private_key -pubout > token_keys/public_key
 
 ##### 2. Enabling auth
 With our new keys generated we can safely turn on the authorization. (For the purpose of ease the keys are checked in this repository, this should not be done for an actual deployment).
+Make sure to import `path` module in your config file if you haven't already done so (`FSM/config/config.default.js`) contains the final setup.
 
 ```
 config.authentication.enable = true;
@@ -45,8 +46,15 @@ config.authentication.jwt.publicKey = path.join(__dirname, '..', '..', ''token_k
 
 N.B. Webgme stores the tokens as cookies and if you are running multiple deployments on localhost with different keys - make sure to clear the cookies when switching deployments.
 
-##### 3. 
-##### 3. Creating the first Site Admin
+##### 3. The Authorization Model
+Import and optionally create a new seed from the seed at (relative to this file) `FSM/src/seeds/gmeAuth/gmeAuth.webgmex`.
+To get an idea of how the authorization model works look at the model in the following order.
+
+1. Study the META model
+1. Look at the documentation in the root-node
+1. Open up the example model
+
+##### 4. Creating the first Site Admin
 Site admins have full access to all projects, organizations and users on the webgme-deployment. Although they can assign new site admins, the initial one must be created using the bin script on the server.
 
 The following command creates an site admin named `admin` with the password `password`.
@@ -54,7 +62,7 @@ The following command creates an site admin named `admin` with the password `pas
 npm run users -- useradd -c -s admin admin@mail.com password
 ```
 
-##### 4. Setting Preferences
+##### 5. Setting Preferences
 By default guests are allowed and user registration too. The guest account is used to identify users that aren't authenticated.
 
 ```
@@ -65,7 +73,7 @@ config.authentication.allowUserRegistration = true;
 
 Note that there is no mechanism for requesting a member-ship - it's either allowed or not allowed to create new users. For advanced users this can be accomplished by using the usermanagement bin script.
 
-##### 5. Routing
+##### 6. Routing
 The regular editor page and the profile-page are two separate pages and it is possible to configure the paths of logging in and out from the editor. By default these are set to the webgme profile page.
 
 ```
@@ -73,5 +81,5 @@ config.authentication.logInUrl = '/profile/login';
 config.authentication.logOutUrl = '/profile/login';
 ```
 
-##### 6. More options
+##### 7. More options
 For more advanced configurations regarding the tokens used for authentication and how to replace the authorization module, see [gmeConfig](https://github.com/webgme/webgme/tree/master/config#authentication).
