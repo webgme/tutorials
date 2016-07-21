@@ -14,7 +14,7 @@
   },
   "version": "1.0.0",
   "peerDependencies": {
-    "webgme": "^2.0.0"
+    "webgme": "webgme/webgme#profile-page-v2"
   },
   "devDependencies": {
     "mocha": "^2.2.5",
