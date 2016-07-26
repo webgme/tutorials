@@ -1,7 +1,7 @@
 ## Introduction
 Webgme provides a simple [authentication and authorization model](https://github.com/webgme/webgme/wiki/Users-and-Authentication).
 By enabling authentication, clients can login and be authenticated as different users each with different access rights 
-(mainly to projects). By default, the authentication is turned off and in this case all connected clients are authenticated as the guest account.
+(mainly to projects). By default, the authentication is turned off and in this case all connected clients are authenticated as the guest account. 
 
 ```
 gmeConfig.authentication.guestAccount = 'guest'
@@ -12,6 +12,7 @@ with more than one collaborator it is beneficial to be able to distinguish betwe
 to scope the rights to different projects. In addition, different extensions can store 
 [component-settings](https://github.com/webgme/webgme/wiki/Component-Settings) within users. 
 
+A summary of the WebGME Authentication and Authorization model is presented in [this Youtube tutorial video](https://youtu.be/xS6_FK8kZhE).
 
 ## Target
 The target of this tutorial is to:
