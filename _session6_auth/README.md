@@ -65,6 +65,8 @@ The following command creates an site admin named `admin` with the password `pas
 npm run users -- useradd -c -s admin admin@mail.com password
 ```
 
+(`npm run users` is [npm-run script](https://docs.npmjs.com/cli/run-script) defined in [package.json](https://github.com/webgme/tutorials/blob/master/_session6_auth/FSM/package.json#L12) and points to the usermanagement bin script inside webgme.)
+
 ### 5. Setting Preferences
 By default, both guests and user registration are allowed. The guest account is used to identify users that aren't authenticated.
 
