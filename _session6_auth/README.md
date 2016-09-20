@@ -37,6 +37,8 @@ and from it generated a public key
 openssl rsa -in token_keys/private_key -pubout > token_keys/public_key
 ```
 
+N.B. The token encoder/decoder is very sensitive to the format of the keys. That includes the line breaks as well. Make sure that both keys have the same linebreaks `CRLF` or `LF`.
+
 ### 2. Enabling auth
 With our new keys generated we can safely turn on the authorization. (For the purpose of ease the keys are checked in to this repository; for an actual deployment, the keys should NOT be checked in to any repo).
 Make sure to import the `path` module in your config file if you haven't already done so; (`FSM/config/config.default.js`) contains the final setup.
