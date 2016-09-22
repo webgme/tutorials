@@ -1,0 +1,8 @@
+[
+  {
+    "id": "GoogleMap",
+    "title": "GoogleMap",
+    "panel": "panels/GoogleMap/GoogleMapPanel",
+    "DEBUG_ONLY": false
+  }
+]

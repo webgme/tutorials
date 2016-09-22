@@ -15,11 +15,21 @@
       "FSM": {
         "src": "src/seeds/FSM"
       }
+    },
+    "visualizers": {
+      "GoogleMap": {
+        "src": "panels/GoogleMap/GoogleMapPanel",
+        "title": "GoogleMap",
+        "panel": "src/visualizers/panels/GoogleMap",
+        "secondary": false,
+        "widget": "src/visualizers/widgets/GoogleMap"
+      }
     }
   },
   "dependencies": {
     "plugins": {},
     "decorators": {},
-    "seeds": {}
+    "seeds": {},
+    "visualizers": {}
   }
 }
