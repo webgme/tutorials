@@ -1,4 +1,4 @@
-/*globals define, WebGMEGlobal*/
+/*globals define, WebGMEGlobal, $, google*/
 /*jshint browser: true*/
 
 /**
@@ -15,7 +15,8 @@ define(['css!./styles/GoogleMapWidget.css'], function () {
         this._logger = logger.fork('Widget');
 
         this._el = container;
-
+        this.map = null;
+        this.mapEl = null;
         this.nodes = {};
         this._initialize();
 
@@ -30,8 +31,20 @@ define(['css!./styles/GoogleMapWidget.css'], function () {
         // set widget class
         this._el.addClass(WIDGET_CLASS);
 
-        // Create a dummy header 
-        this._el.append('<h3>GoogleMap Events:</h3>');
+        // Add the map element
+        this.mapEl = $('<div id="map"/>');
+        this.mapEl.height(height);
+        this.mapEl.width(width);
+        this._el.append(this.mapEl);
+
+        // Load the map API from google
+        $.getScript('https://www.google.com/jsapi', function () {
+            google.load('maps', '3', {
+                other_params: 'sensor=false', callback: function () {
+                    self.onMapLoaded();
+                }
+            });
+        });
 
         // Registering to events can be done with jQuery (as normal)
         this._el.on('dblclick', function (event) {
@@ -41,8 +54,29 @@ define(['css!./styles/GoogleMapWidget.css'], function () {
         });
     };
 
+    GoogleMapWidget.prototype.onMapLoaded = function () {
+        // At this point google is available as a global variable
+        var self = this,
+            mapOptions = {
+                center: new google.maps.LatLng(51.508742, -0.120850),
+                zoom: 7,
+                disableDefaultUI: true
+            };
+
+        this.map = new google.maps.Map(this.mapEl.get(0), mapOptions);
+
+        this.map.addListener('click', function (event, asf) {
+            // Add a google marker
+            var marker = new google.maps.Marker({
+                position: event.latLng,
+                map: self.map
+            });
+        });
+    };
+
     GoogleMapWidget.prototype.onWidgetContainerResize = function (width, height) {
-        this._logger.debug('Widget is resizing...');
+        this.mapEl.height(height);
+        this.mapEl.width(width);
     };
 
     // Adding/Removing/Updating items
