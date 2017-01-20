@@ -91,5 +91,8 @@ config.authentication.logOutUrl = '/profile/login';
 ### 7. More options
 For more advanced configurations regarding the tokens used for authentication and how to replace the authorization module, see [gmeConfig](https://github.com/webgme/webgme/tree/master/config#authentication).
 
+### 8. Important considerations
+If your deployment is open to the public you should definitely make sure that you're running your webgme server behind a secure proxy (for instance [nginx](https://www.nginx.com/resources/wiki/)). The reason for this it two avoid hijacking of the token (or at login the user credentials) from a man in the middle attack.
+
 ### Common issues
 If you have problems with faulty keys or are generating new keys for the same host clearing the stored cookies inside the browser can solve some 403 issues.
