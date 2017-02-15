@@ -54,3 +54,5 @@ The goal of these tutorials is (1) to become familiar with using the webme-cli t
 - In the [fourth tutorial](https://www.youtube.com/watch?v=pV4BIBrKrwo&list=PLhvSjgKmeyjhp4_hnf-xPdCgES56dnMJb&index=6), a visualizer will be written, allowing users to access properties and artifacts of the models, and dynamically visualize the state of the model.
 
 - In the [fifth tutorial](https://www.youtube.com/watch?v=PR_EcNss-2g&list=PLhvSjgKmeyjhp4_hnf-xPdCgES56dnMJb&index=7) video, we see how an existing model (and meta-model) can be attached to a new WebGME project as a library, allowing users to extend a modeling paradigm and build upon the instance models, without modifying the original model/meta-model.
+
+- In the [sixth tutorial](https://www.youtube.com/watch?v=xS6_FK8kZhE&feature=youtu.be) video, we see how authentication and authorization can be enabled. How the auth model looks like and how to use the user profile page.
