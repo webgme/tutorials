@@ -11,21 +11,19 @@ needed for a (node)npm repository. It also contains the webgme specific [config]
 defines or imports from another webgme domain repo and is used and maintained by [webgme-cli](https://github.com/webgme/webgme-cli). At this point it should be empty.
 
 ## Installing dependencies and starting the app
-To install the node dependencies, first we need to enter the project directory (`FSM`), then use the command
+To install the node dependencies, first we need to enter the project directory (`FSM`), then use the command:
 ```
 npm install
 ```
-to install the npm dependencies including webgme (in later versions of npm an explicit `npm install webgme` is needed as it is a [peer-dependency](https://nodejs.org/en/blog/npm/peer-dependencies/)).
+Since webgme is a [peer-dependency](https://nodejs.org/en/blog/npm/peer-dependencies/)) of the newly created package we need to install it explicitly (starting from npm 3).
+```
+npm install webgme
+```
 
 To start the app run
 ```
 npm start
 ```
-or, if you have webgme-cli installed,  
-```
-webgme start
-```
-
 ## Open the app in a browser
 In a browser (Chrome, Safari or (Firefox)) visit `127.0.0.1:8888` (`localhost:8888`) and the app should bring up the `Create Project` dialog.
 
