@@ -4,7 +4,7 @@ By enabling authentication, clients can login and be authenticated as different 
 (mainly to projects). By default, the authentication is turned off and in this case all connected clients are authenticated as the guest account. 
 
 ```
-gmeConfig.authentication.guestAccount = 'guest'
+gmeConfig.authentication.guestAccount = 'guest';
 ```
 
 Looking at the **Project History** we can see that each commit is current associated with this userId. For larger projects 
