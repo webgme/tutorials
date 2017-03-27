@@ -45,8 +45,8 @@ Make sure to import the `path` module in your config file if you haven't already
 
 ```
 config.authentication.enable = true;
-config.authentication.jwt.privateKey = path.join(__dirname, '..', '..', ''token_keys', 'private_key');
-config.authentication.jwt.publicKey = path.join(__dirname, '..', '..', ''token_keys', 'public_key');
+config.authentication.jwt.privateKey = path.join(__dirname, '..', '..', 'token_keys', 'private_key');
+config.authentication.jwt.publicKey = path.join(__dirname, '..', '..', 'token_keys', 'public_key');
 ```
 
 N.B. Webgme stores the tokens as cookies and if you are running multiple deployments on localhost with different keys - make sure to clear the cookies when switching deployments.
