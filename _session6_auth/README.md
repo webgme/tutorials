@@ -94,7 +94,7 @@ For more advanced configurations regarding the tokens used for authentication an
 ### 8. Important considerations
 If your deployment is open to the public you should definitely make sure that you're running your webgme server behind a secure proxy (for instance [nginx](https://www.nginx.com/resources/wiki/)). The reason for this it two avoid hijacking of the token (or at login the user credentials) from a man in the middle attack.
 
-### 9. Extrenal Authentication
+### 9. External Authentication
 By sharing the private key with a trusted 3rd party, authenticated requests to the webgme server can be made without explicit sign-in (using username and password). 
 
 The webgme server looks for tokens in these places (ordered by look-up order):
@@ -103,6 +103,8 @@ The webgme server looks for tokens in these places (ordered by look-up order):
 3) Inside a cookie at `access_token` (configurable at gmeConfig.authentication.jwt.cookieId).
 
 If an authenticated userId doesn't have an entry in the webgme user database - the user will be created automatically with a random password. (Users can later visit the profile page and change their password.) These "inferred" users will not be able to create new projects by default, however in version v2.12.0 this is configurable `config.authentication.inferredUsersCanCreate = false`). 
+
+Tokens passed via the url-query will be placed in the `access_token`-cookie by the webgme server. If configured to do so (default) - the webgme server will also renew such tokens when they're about to expire.
 
 ### Common issues
 If you have problems with faulty keys or are generating new keys for the same host clearing the stored cookies inside the browser can solve some 403 issues.
