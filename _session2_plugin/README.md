@@ -46,9 +46,9 @@ npm run
 
 npm run plugin
 
-node ./node_modules/webgme/src/bin/run_plugin.js
+node ./node_modules/webgme-engine/src/bin/run_plugin.js
 
-node ./node_modules/webgme/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
+node ./node_modules/webgme-engine/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
 ```   
 
 - Automated execution by using nodemon.
@@ -56,9 +56,9 @@ node ./node_modules/webgme/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
 ```
 npm install -g nodemon
 
-nodemon ./node_modules/webgme/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
+nodemon ./node_modules/webgme-engine/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
 
-nodemon --ext ejs,js ./node_modules/webgme/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
+nodemon --ext ejs,js ./node_modules/webgme-engine/src/bin/run_plugin.js FSMCodeGenerator FSM -s /a/F
 ```
 
 - Change source code and save.
