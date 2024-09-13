@@ -30,7 +30,7 @@ If we do not generate our own keys and set the configuration to use these new ke
 1. Create a new directory, `token_keys`, outside of the repository (if not guarded against all files under the cwd of the express server can accessed).
 1. Using `openssl` (available for [windows](http://gnuwin32.sourceforge.net/packages/openssl.htm), the first step is to generate a private key
 ```
-openssl genrsa -out token_keys/private_key 1024
+openssl genrsa -out token_keys/private_key 2048
 ```
 and from it generated a public key
 ```
@@ -38,6 +38,7 @@ openssl rsa -in token_keys/private_key -pubout > token_keys/public_key
 ```
 
 N.B. The token encoder/decoder is very sensitive to the format of the keys. That includes the line breaks as well. Make sure that both keys have the same linebreaks `CRLF` or `LF`.
+Note that the minimum key size is 2048! There might be a warning when you start the server about this which can be disabled in the config as suggested in the warning.
 
 ### 2. Enabling auth
 With our new keys generated we can safely turn on the authorization. (For the purpose of ease the keys are checked in to this repository; for an actual deployment, the keys should NOT be checked in to any repo).
